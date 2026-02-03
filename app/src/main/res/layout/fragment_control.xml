@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TAB 1: CONTROL (v1.3.0 - Mode-Based UI)
+  =======================================
+  Clean, focused control center with:
+  - Status Card: IP:Port + Copy
+  - Mode Selector: Local/Tailscale/Warpgate/P2P
+  - Config Card: ViewFlipper with mode-specific configs
+  - Settings Card: Collapsible boot/notification
+-->
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fillViewport="true">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Status Card -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/statusCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Status Header -->
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:gravity="center_vertical">
+
+          <ImageView
+            android:id="@+id/statusIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_indicator_wifi"
+            android:tint="@color/status_inactive"
+            android:contentDescription="@string/cd_status_icon" />
+
+          <TextView
+            android:id="@+id/statusText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/status_disabled"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface"
+            android:layout_marginStart="12dp"
+            android:accessibilityLiveRegion="polite" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/copyButton"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:icon="@drawable/ic_copy"
+            app:iconSize="20dp"
+            android:contentDescription="@string/cd_copy_button" />
+
+        </LinearLayout>
+
+        <!-- IP:Port Display -->
+        <TextView
+          android:id="@+id/ipPortText"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="---.---.---.---:5555"
+          android:textSize="28sp"
+          android:textStyle="bold"
+          android:fontFamily="monospace"
+          android:layout_marginTop="16dp"
+          android:textColor="?colorPrimary"
+          android:contentDescription="@string/cd_ip_address"
+          android:accessibilityLiveRegion="polite" />
+
+        <!-- Connection Command -->
+        <TextView
+          android:id="@+id/commandText"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/adb_not_active"
+          android:textSize="13sp"
+          android:fontFamily="monospace"
+          android:layout_marginTop="8dp"
+          android:textColor="?colorOnSurfaceVariant"
+          android:contentDescription="@string/cd_connection_command"
+          android:accessibilityLiveRegion="polite" />
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Mode Selector Card -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/modeCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/connection_mode_label"
+          android:textSize="12sp"
+          android:textStyle="bold"
+          android:textColor="?colorPrimary"
+          android:letterSpacing="0.1"
+          android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+          android:id="@+id/modeToggleGroup"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:singleSelection="true"
+          app:selectionRequired="true">
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/modeLocal"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/mode_local"
+            android:textSize="11sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/modeTailscale"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/mode_tailscale"
+            android:textSize="11sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/modeWarpgate"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/mode_warpgate_short"
+            android:textSize="11sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/modeP2P"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/mode_p2p"
+            android:textSize="11sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Mode Config Card (ViewFlipper) -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/configCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <ViewFlipper
+        android:id="@+id/configFlipper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Mode 0: Local -->
+        <include layout="@layout/config_local" />
+
+        <!-- Mode 1: Tailscale -->
+        <include layout="@layout/config_tailscale" />
+
+        <!-- Mode 2: Warpgate -->
+        <include layout="@layout/config_warpgate" />
+
+        <!-- Mode 3: P2P -->
+        <include layout="@layout/config_p2p" />
+
+      </ViewFlipper>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Root Warning -->
+    <TextView
+      android:id="@+id/rootWarning"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/error_no_root"
+      android:textSize="13sp"
+      android:textColor="@color/error"
+      android:visibility="gone"
+      android:gravity="center"
+      android:padding="12dp"
+      android:background="@drawable/bg_shimmer_card"
+      android:accessibilityLiveRegion="assertive" />
+
+    <!-- Settings Card (Collapsible) -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/settingsCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Settings Header (Clickable) -->
+        <LinearLayout
+          android:id="@+id/settingsHeader"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:padding="16dp"
+          android:gravity="center_vertical"
+          android:background="?selectableItemBackground">
+
+          <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/heading_settings"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface" />
+
+          <ImageView
+            android:id="@+id/settingsExpandIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_expand_more"
+            android:tint="?colorOnSurfaceVariant"
+            android:contentDescription="@string/state_disabled" />
+
+        </LinearLayout>
+
+        <!-- Settings Content (Expandable) -->
+        <LinearLayout
+          android:id="@+id/settingsContent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:paddingBottom="16dp"
+          android:visibility="gone">
+
+          <!-- Boot Persistence -->
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/bootSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/switch_boot"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurface"
+            android:contentDescription="@string/cd_boot_toggle"
+            android:accessibilityLiveRegion="polite" />
+
+          <!-- Hide Notification -->
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/hideNotificationSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/settings_hide_notification"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurface"
+            android:contentDescription="@string/cd_notification_toggle"
+            android:accessibilityLiveRegion="polite" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+  </LinearLayout>
+
+</ScrollView>

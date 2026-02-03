@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P2P Token Mode Config -->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="16dp">
+
+  <!-- P2P Description -->
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/p2p_description"
+    android:textSize="12sp"
+    android:textColor="?colorOnSurfaceVariant"
+    android:layout_marginBottom="12dp" />
+
+  <!-- Token Display Section (hidden until token generated) -->
+  <LinearLayout
+    android:id="@+id/p2pTokenSection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/p2p_token_label"
+      android:textSize="12sp"
+      android:textColor="?colorOnSurfaceVariant" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginTop="4dp"
+      android:gravity="center_vertical">
+
+      <TextView
+        android:id="@+id/p2pTokenText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/p2p_token_placeholder"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:textColor="?colorOnSurface"
+        android:letterSpacing="0.1" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/p2pShowHideButton"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:icon="@drawable/ic_visibility"
+        app:iconSize="20dp"
+        android:contentDescription="@string/p2p_show_token" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/p2pCopyButton"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="4dp"
+        app:icon="@drawable/ic_copy"
+        app:iconSize="20dp"
+        android:contentDescription="@string/p2p_copy_token" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/p2pQrButton"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="4dp"
+        app:icon="@drawable/ic_qr"
+        app:iconSize="20dp"
+        android:contentDescription="@string/p2p_show_qr" />
+
+    </LinearLayout>
+
+    <!-- Expiry + Revoke Row -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginTop="8dp"
+      android:gravity="center_vertical">
+
+      <TextView
+        android:id="@+id/p2pExpiresText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/p2p_status_idle"
+        android:textSize="12sp"
+        android:textColor="?colorOnSurfaceVariant"
+        android:accessibilityLiveRegion="polite" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/p2pRevokeButton"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/p2p_revoke_token"
+        android:textSize="12sp" />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+  <!-- Generate Token Button (shown when no token) -->
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/p2pGenerateButton"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:text="@string/p2p_generate_token"
+    android:textSize="16sp" />
+
+  <!-- Divider -->
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginVertical="16dp"
+    android:background="?colorOutlineVariant" />
+
+  <!-- Connect with Token Section -->
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/p2p_connect_with_token"
+    android:textSize="14sp"
+    android:textStyle="bold"
+    android:textColor="?colorOnSurface"
+    android:layout_marginBottom="8dp" />
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/p2pTokenInputLayout"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/p2p_token_input_hint">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/p2pTokenInput"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="textCapCharacters"
+      android:textSize="14sp"
+      android:fontFamily="monospace"
+      android:maxLength="11" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/p2pConnectButton"
+    style="@style/Widget.Material3.Button.TonalButton"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:layout_marginTop="12dp"
+    android:text="@string/btn_connect" />
+
+  <!-- P2P Status -->
+  <TextView
+    android:id="@+id/p2pStatusText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/p2p_status_idle"
+    android:textSize="12sp"
+    android:textColor="?colorOnSurfaceVariant"
+    android:layout_marginTop="8dp"
+    android:layout_gravity="center_horizontal"
+    android:accessibilityLiveRegion="polite" />
+
+</LinearLayout>

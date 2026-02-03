@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Local ADB Mode Config -->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="16dp">
+
+  <!-- Port + Enable Row -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/portLayout"
+      style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+      android:layout_width="100dp"
+      android:layout_height="wrap_content"
+      android:hint="@string/hint_port">
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/portInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:text="5555"
+        android:textSize="14sp"
+        android:maxLength="5" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/enableAdbButton"
+      android:layout_width="0dp"
+      android:layout_height="56dp"
+      android:layout_weight="1"
+      android:layout_marginStart="12dp"
+      android:text="@string/btn_enable"
+      android:textSize="16sp" />
+
+  </LinearLayout>
+
+</LinearLayout>

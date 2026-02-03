@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TAB 2: DEVICES (v1.3.0)
+  =======================
+  Trusted device management:
+  - Trusted Devices RecyclerView
+  - Pending Approval section
+-->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:padding="16dp">
+
+  <!-- Trusted Devices Card -->
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/trustedCard"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="?colorSurface">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+      <!-- Trusted Devices Header -->
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="@string/trusted_devices"
+          android:textSize="16sp"
+          android:textStyle="bold"
+          android:textColor="?colorOnSurface" />
+
+        <TextView
+          android:id="@+id/trustedCountText"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="(0)"
+          android:textSize="14sp"
+          android:textColor="?colorOnSurfaceVariant" />
+
+      </LinearLayout>
+
+      <!-- Trusted Devices List -->
+      <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trustedDevicesRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
+      <!-- Empty State -->
+      <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+          android:layout_width="64dp"
+          android:layout_height="64dp"
+          android:src="@drawable/ic_devices"
+          android:tint="?colorOnSurfaceVariant"
+          android:alpha="0.5"
+          android:contentDescription="@string/trusted_devices" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/devices_empty_title"
+          android:textSize="16sp"
+          android:textStyle="bold"
+          android:textColor="?colorOnSurface"
+          android:layout_marginTop="16dp" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/devices_empty_description"
+          android:textSize="14sp"
+          android:textColor="?colorOnSurfaceVariant"
+          android:layout_marginTop="8dp"
+          android:gravity="center" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+  </com.google.android.material.card.MaterialCardView>
+
+  <!-- Pending Approval Card -->
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/pendingCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:visibility="gone"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="2dp"
+    app:strokeColor="@color/warning_orange"
+    app:cardBackgroundColor="?colorSurface">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="16dp">
+
+      <!-- Pending Header -->
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:src="@drawable/ic_warning"
+          android:tint="@color/warning_orange"
+          android:contentDescription="@string/pending_approval" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="12dp"
+          android:text="@string/pending_approval"
+          android:textSize="14sp"
+          android:textStyle="bold"
+          android:textColor="@color/warning_orange"
+          android:letterSpacing="0.05" />
+
+      </LinearLayout>
+
+      <!-- Pending Device Info -->
+      <TextView
+        android:id="@+id/pendingIpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pending_device_message"
+        android:textSize="14sp"
+        android:textColor="?colorOnSurface"
+        android:layout_marginTop="12dp" />
+
+      <TextView
+        android:id="@+id/pendingTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/devices_requested_now"
+        android:textSize="12sp"
+        android:textColor="?colorOnSurfaceVariant"
+        android:layout_marginTop="4dp" />
+
+      <!-- Approve/Deny Buttons -->
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/denyButton"
+          style="@style/Widget.Material3.Button.OutlinedButton"
+          android:layout_width="wrap_content"
+          android:layout_height="48dp"
+          android:text="@string/btn_deny"
+          android:layout_marginEnd="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/approveButton"
+          android:layout_width="wrap_content"
+          android:layout_height="48dp"
+          android:text="@string/btn_approve" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+  </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

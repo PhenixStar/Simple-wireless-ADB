@@ -7,15 +7,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 /**
  * ViewPager2 adapter for the main tab navigation.
  *
- * TAB STRUCTURE (v1.2.0):
- * =======================
- * Tab 0: DashboardFragment   - Unified control center (Local ADB + Settings)
- * Tab 1: RemoteRelayFragment - REMOTE connections (Tailscale/Warpgate/P2P)
- * Tab 2: HelpFragment        - Help docs, downloads, theme settings
+ * TAB STRUCTURE (v1.3.0 - Simplified):
+ * ====================================
+ * Tab 0: ControlFragment - Mode-based connection control (Local/Tailscale/Warpgate/P2P)
+ * Tab 1: DevicesFragment - Trusted device management + pending approvals
+ * Tab 2: HelpFragment    - Help docs, downloads, theme settings
  *
- * v1.2.0 Changes:
- * - Replaced LocalAdbFragment with DashboardFragment
- * - Dashboard merges local ADB + boot/notification settings + trusted devices
+ * v1.3.0 Changes:
+ * - Replaced DashboardFragment + RemoteRelayFragment with ControlFragment
+ * - Added DevicesFragment for trusted device management
+ * - Reduced complexity: 3 focused tabs instead of redundant UI
  */
 class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
@@ -23,9 +24,9 @@ class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activi
 
   override fun createFragment(position: Int): Fragment {
     return when (position) {
-      TAB_DASHBOARD -> DashboardFragment()       // Tab 0: Dashboard control center
-      TAB_REMOTE_RELAY -> RemoteRelayFragment()  // Tab 1: Remote connections
-      TAB_HELP -> HelpFragment()                 // Tab 2: Help & downloads
+      TAB_CONTROL -> ControlFragment()   // Tab 0: Mode-based connection control
+      TAB_DEVICES -> DevicesFragment()   // Tab 1: Trusted device management
+      TAB_HELP -> HelpFragment()         // Tab 2: Help & downloads
       else -> throw IllegalArgumentException("Invalid tab position: $position")
     }
   }
@@ -33,9 +34,9 @@ class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activi
   companion object {
     const val TAB_COUNT = 3
 
-    // Tab indices (v1.2.0)
-    const val TAB_DASHBOARD = 0     // DashboardFragment: Unified control center
-    const val TAB_REMOTE_RELAY = 1  // RemoteRelayFragment: Remote connections
-    const val TAB_HELP = 2          // HelpFragment: Help & downloads
+    // Tab indices (v1.3.0)
+    const val TAB_CONTROL = 0  // ControlFragment: Mode-based connection control
+    const val TAB_DEVICES = 1  // DevicesFragment: Trusted device management
+    const val TAB_HELP = 2     // HelpFragment: Help & downloads
   }
 }

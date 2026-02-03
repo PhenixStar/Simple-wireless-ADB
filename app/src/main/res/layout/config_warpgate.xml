@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Warpgate Mode Config -->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="16dp">
+
+  <!-- Warpgate Host -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/warpgateHostLayout"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/warpgate_host_hint">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/warpgateHostInput"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="textUri"
+      android:textSize="14sp" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <!-- Port + Username Row -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="12dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/warpgatePortLayout"
+      style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+      android:layout_width="100dp"
+      android:layout_height="wrap_content"
+      android:hint="@string/warpgate_port_hint">
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/warpgatePortInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:text="8443"
+        android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/warpgateUsernameLayout"
+      style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:layout_marginStart="12dp"
+      android:hint="@string/warpgate_username_hint">
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/warpgateUsernameInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+  </LinearLayout>
+
+  <!-- Password -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/warpgatePasswordLayout"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:hint="@string/warpgate_password_hint"
+    app:endIconMode="password_toggle">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/warpgatePasswordInput"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="textPassword"
+      android:textSize="14sp" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <!-- Target Name -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/warpgateTargetLayout"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:hint="@string/warpgate_target_hint">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/warpgateTargetInput"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="text"
+      android:text="adb"
+      android:textSize="14sp" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <!-- Connect Button + Status -->
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/warpgateConnectButton"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_marginTop="16dp"
+    android:text="@string/btn_connect"
+    android:textSize="16sp"
+    android:minHeight="48dp" />
+
+  <TextView
+    android:id="@+id/warpgateStatusText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/warpgate_disconnected"
+    android:textSize="12sp"
+    android:textColor="?colorOnSurfaceVariant"
+    android:layout_marginTop="8dp"
+    android:layout_gravity="center_horizontal"
+    android:accessibilityLiveRegion="polite" />
+
+</LinearLayout>

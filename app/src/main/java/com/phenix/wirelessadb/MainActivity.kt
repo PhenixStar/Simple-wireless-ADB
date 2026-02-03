@@ -14,12 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.MarginPageTransformer
 import com.google.android.material.tabs.TabLayoutMediator
 import com.phenix.wirelessadb.databinding.ActivityMainBinding
-import com.phenix.wirelessadb.model.IndicatorState
-import com.phenix.wirelessadb.model.StatusIndicators
 import com.phenix.wirelessadb.theme.ThemeManager
 import com.phenix.wirelessadb.ui.MainPagerAdapter
+import com.phenix.wirelessadb.util.AccessibilityHelper
+import com.phenix.wirelessadb.util.isReducedMotionEnabled
 import com.phenix.wirelessadb.viewmodel.AdbViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -57,7 +59,6 @@ class MainActivity : AppCompatActivity() {
 
     requestNotificationPermission()
     setupViewPager()
-    observeStatusIndicators()
 
     LocalBroadcastManager.getInstance(this).registerReceiver(
       pendingAuthReceiver,
@@ -101,49 +102,29 @@ class MainActivity : AppCompatActivity() {
     val adapter = MainPagerAdapter(this)
     binding.viewPager.adapter = adapter
 
+    // Add smooth page transformer for fragment transitions (respecting reduced motion)
+    if (!isReducedMotionEnabled()) {
+      binding.viewPager.setPageTransformer(
+        MarginPageTransformer(16) // 16dp margin between pages
+      )
+    }
+
     TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-      tab.text = when (position) {
-        MainPagerAdapter.TAB_DASHBOARD -> getString(R.string.tab_dashboard)
-        MainPagerAdapter.TAB_REMOTE_RELAY -> getString(R.string.tab_remote_relay)
+      val tabName = when (position) {
+        MainPagerAdapter.TAB_CONTROL -> getString(R.string.tab_control)
+        MainPagerAdapter.TAB_DEVICES -> getString(R.string.tab_devices)
         MainPagerAdapter.TAB_HELP -> getString(R.string.tab_help)
         else -> null
       }
+      tab.text = tabName
+      // Set content description for accessibility
+      tab.contentDescription = when (position) {
+        MainPagerAdapter.TAB_CONTROL -> getString(R.string.cd_tab_control)
+        MainPagerAdapter.TAB_DEVICES -> getString(R.string.cd_tab_devices)
+        MainPagerAdapter.TAB_HELP -> getString(R.string.cd_tab_help)
+        else -> tabName
+      }
     }.attach()
-  }
-
-  private fun observeStatusIndicators() {
-    viewModel.statusIndicators.observe(this) { indicators ->
-      updateToolbarIndicators(indicators)
-    }
-  }
-
-  private fun updateToolbarIndicators(indicators: StatusIndicators) {
-    // Local ADB indicator
-    binding.indicatorLocalAdb.setBackgroundResource(
-      when (indicators.localAdb) {
-        IndicatorState.ACTIVE -> R.drawable.indicator_dot_active
-        IndicatorState.WARNING -> R.drawable.indicator_dot_warning
-        IndicatorState.INACTIVE -> R.drawable.indicator_dot_inactive
-      }
-    )
-
-    // Tailscale indicator
-    binding.indicatorTailscale.setBackgroundResource(
-      when (indicators.tailscale) {
-        IndicatorState.ACTIVE -> R.drawable.indicator_dot_active
-        IndicatorState.WARNING -> R.drawable.indicator_dot_warning
-        IndicatorState.INACTIVE -> R.drawable.indicator_dot_inactive
-      }
-    )
-
-    // Warpgate indicator
-    binding.indicatorWarpgate.setBackgroundResource(
-      when (indicators.warpgate) {
-        IndicatorState.ACTIVE -> R.drawable.indicator_dot_active
-        IndicatorState.WARNING -> R.drawable.indicator_dot_warning
-        IndicatorState.INACTIVE -> R.drawable.indicator_dot_inactive
-      }
-    )
   }
 
   companion object {
