@@ -14,6 +14,12 @@ val envProps = Properties().apply {
   }
 }
 
+// CI/CD signing support (from GitHub Actions -P parameters)
+val ciKeystoreFile: String? by project
+val ciKeystorePassword: String? by project
+val ciKeyAlias: String? by project
+val ciKeyPassword: String? by project
+
 android {
   namespace = "com.phenix.wirelessadb"
   compileSdk = 34
@@ -28,10 +34,19 @@ android {
 
   signingConfigs {
     create("release") {
-      storeFile = file(envProps.getProperty("KEYSTORE_FILE", "../rootadb.keystore"))
-      storePassword = envProps.getProperty("KEYSTORE_PASSWORD", "")
-      keyAlias = envProps.getProperty("KEY_ALIAS", "phenkey")
-      keyPassword = envProps.getProperty("KEY_PASSWORD", "")
+      // CI/CD builds (GitHub Actions) take precedence
+      if (ciKeystoreFile != null) {
+        storeFile = file(ciKeystoreFile!!)
+        storePassword = ciKeystorePassword ?: ""
+        keyAlias = ciKeyAlias ?: "phenkey"
+        keyPassword = ciKeyPassword ?: ""
+      } else {
+        // Local builds from .env file
+        storeFile = file(envProps.getProperty("KEYSTORE_FILE", "../rootadb.keystore"))
+        storePassword = envProps.getProperty("KEYSTORE_PASSWORD", "")
+        keyAlias = envProps.getProperty("KEY_ALIAS", "phenkey")
+        keyPassword = envProps.getProperty("KEY_PASSWORD", "")
+      }
     }
   }
 
@@ -104,4 +119,7 @@ dependencies {
 
   // Conscrypt for TLS 1.3 support (ADB pairing)
   implementation("org.conscrypt:conscrypt-android:2.5.2")
+
+  // ZXing for QR code generation
+  implementation("com.google.zxing:core:3.5.2")
 }

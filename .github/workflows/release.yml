@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  push:
+    branches: [main, release]
+
+jobs:
+  release:
+    name: Build Release APK & Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/rootadb-release.keystore
+
+      - name: Build Release APK
+        run: |
+          ./gradlew assembleRelease \
+            -PKEYSTORE_FILE=rootadb-release.keystore \
+            -PKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }} \
+            -PKEY_ALIAS=${{ secrets.KEY_ALIAS }} \
+            -PKEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
+            --no-daemon
+
+      - name: Get Version Name
+        id: version
+        run: |
+          VERSION=$(grep "versionName" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Extract Version Code
+        id: versioncode
+        run: |
+          CODE=$(grep "versionCode" app/build.gradle.kts | sed 's/.*= \([0-9]*\).*/\1/')
+          echo "code=$CODE" >> $GITHUB_OUTPUT
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          echo "# What's Changed" > changelog.md
+
+          # Get latest tag if exists, else use initial commit
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -n "$PREV_TAG" ]; then
+            echo "" >> changelog.md
+            echo "## 🚀 New Features" >> changelog.md
+            git log ${PREV_TAG}..HEAD --oneline --grep="^Add:" --grep="^Feat:" --grep="^Feature:" -i >> changelog.md || true
+
+            echo "" >> changelog.md
+            echo "## 🐛 Bug Fixes" >> changelog.md
+            git log ${PREV_TAG}..HEAD --oneline --grep="^Fix:" --grep="^Bugfix:" -i >> changelog.md || true
+
+            echo "" >> changelog.md
+            echo "## 🔧 Improvements" >> changelog.md
+            git log ${PREV_TAG}..HEAD --oneline --grep="^Update:" --grep="^Refactor:" --grep="^Improve:" -i >> changelog.md || true
+
+            echo "" >> changelog.md
+            echo "## 📝 Other Changes" >> changelog.md
+            git log ${PREV_TAG}..HEAD --oneline --grep="^Docs:" --grep="^Chore:" --grep="^Test:" -i >> changelog.md || true
+          else
+            echo "" >> changelog.md
+            echo "Initial release" >> changelog.md
+          fi
+
+          # Check if changelog is empty and add default message
+          if [ $(grep -c "^-" changelog.md) -eq 0 ]; then
+            echo "" >> changelog.md
+            echo "- Bug fixes and improvements" >> changelog.md
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body_path: changelog.md
+          files: app/build/outputs/apk/release/app-release.apk
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release APK as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk-v${{ steps.version.outputs.version }}
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 90
