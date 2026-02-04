@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Main Activity with Accessibility Support (v1.2.0 Phase 4) -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/rootLayout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:fitsSystemWindows="true">
+  android:fitsSystemWindows="true"
+  android:importantForAccessibility="yes">
 
   <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/appBarLayout"
@@ -19,52 +21,14 @@
       android:layout_width="match_parent"
       android:layout_height="?attr/actionBarSize"
       app:title="@string/app_name_short"
-      app:subtitle="@string/app_subtitle">
-
-      <!-- Status Indicators Container (right side of toolbar) -->
-      <LinearLayout
-        android:id="@+id/statusIndicatorsContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <!-- Local ADB Indicator -->
-        <View
-          android:id="@+id/indicatorLocalAdb"
-          android:layout_width="8dp"
-          android:layout_height="8dp"
-          android:background="@drawable/indicator_dot_inactive"
-          android:contentDescription="@string/indicator_local_adb" />
-
-        <!-- Tailscale Indicator -->
-        <View
-          android:id="@+id/indicatorTailscale"
-          android:layout_width="8dp"
-          android:layout_height="8dp"
-          android:layout_marginStart="6dp"
-          android:background="@drawable/indicator_dot_inactive"
-          android:contentDescription="@string/indicator_tailscale" />
-
-        <!-- Warpgate Indicator -->
-        <View
-          android:id="@+id/indicatorWarpgate"
-          android:layout_width="8dp"
-          android:layout_height="8dp"
-          android:layout_marginStart="6dp"
-          android:background="@drawable/indicator_dot_inactive"
-          android:contentDescription="@string/indicator_warpgate" />
-
-      </LinearLayout>
-
-    </com.google.android.material.appbar.MaterialToolbar>
+      app:subtitle="@string/app_subtitle"
+      android:contentDescription="@string/app_name_full" />
 
     <com.google.android.material.tabs.TabLayout
       android:id="@+id/tabLayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:contentDescription="@string/section_quick_toggles"
       app:tabMode="fixed"
       app:tabGravity="fill"
       app:tabIndicatorFullWidth="false"
@@ -76,6 +40,7 @@
     android:id="@+id/viewPager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:contentDescription="@string/section_settings"
     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

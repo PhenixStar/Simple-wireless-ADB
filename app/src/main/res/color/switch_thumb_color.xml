@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Checked state: use primary color -->
+  <item android:color="@color/secondary" android:state_checked="true" />
+  <!-- Unchecked state: use neutral gray -->
+  <item android:color="#BDBDBD" android:state_checked="false" />
+</selector>

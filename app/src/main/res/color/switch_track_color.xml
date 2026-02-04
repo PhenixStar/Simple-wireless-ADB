@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Checked state: use secondary container color -->
+  <item android:color="@color/secondary_container" android:state_checked="true" />
+  <!-- Unchecked state: use light gray -->
+  <item android:color="#E0E0E0" android:state_checked="false" />
+</selector>

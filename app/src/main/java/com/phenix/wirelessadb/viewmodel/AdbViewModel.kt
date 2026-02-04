@@ -68,6 +68,7 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
   val p2pState: LiveData<com.phenix.wirelessadb.p2p.P2PState> get() = p2pManager.connectionState
   val p2pToken: LiveData<com.phenix.wirelessadb.model.P2PToken?> get() = p2pManager.currentToken
   val p2pError: LiveData<String?> get() = p2pManager.error
+  val p2pTunnelEndpoint: LiveData<String?> get() = p2pManager.tunnelEndpoint
 
   init {
     initializeShellExecutor()
@@ -217,9 +218,10 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
           ?: ""
       }
       ConnectionMode.P2P_TOKEN -> {
-        // P2P command will be provided by P2PManager when implemented
-        // Fallback to local for now
-        localIp?.let { "adb connect $it:${status.port}" } ?: ""
+        // Use P2P tunnel endpoint when connected
+        p2pManager.getAdbCommand()
+          ?: localIp?.let { "adb connect $it:${status.port}" }
+          ?: ""
       }
     }
   }

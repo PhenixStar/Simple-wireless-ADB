@@ -1,24 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <!-- Main App Theme - Material 3 Dark -->
   <style name="Theme.WirelessADB" parent="Theme.Material3.Dark.NoActionBar">
-    <item name="colorPrimary">@color/primary</item>
-    <item name="colorPrimaryContainer">@color/primary_container</item>
-    <item name="colorSecondary">@color/secondary</item>
-    <item name="colorSecondaryContainer">@color/secondary_container</item>
-    <item name="colorSurface">@color/surface</item>
-    <item name="colorSurfaceVariant">@color/surface_variant</item>
-    <item name="colorOnPrimary">@color/on_primary</item>
-    <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
-    <item name="colorOnSecondary">@color/on_secondary</item>
-    <item name="colorOnSecondaryContainer">@color/on_secondary_container</item>
-    <item name="colorOnSurface">@color/on_surface</item>
-    <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
-    <item name="colorError">@color/error</item>
-    <item name="colorOnError">@color/on_error</item>
-    <item name="colorOutline">@color/outline</item>
-    <item name="android:colorBackground">@color/background</item>
+    <!-- Primary Colors -->
+    <item name="colorPrimary">@color/md_theme_dark_primary</item>
+    <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+    <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
+    <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+
+    <!-- Secondary Colors -->
+    <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+    <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+    <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
+    <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
+
+    <!-- Tertiary Colors -->
+    <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
+    <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
+    <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
+    <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
+
+    <!-- Error Colors -->
+    <item name="colorError">@color/md_theme_dark_error</item>
+    <item name="colorOnError">@color/md_theme_dark_onError</item>
+    <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+    <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+
+    <!-- Background & Surface -->
+    <item name="android:colorBackground">@color/md_theme_dark_background</item>
+    <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+    <item name="colorSurface">@color/md_theme_dark_surface</item>
+    <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+    <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+    <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+
+    <!-- Surface Containers (elevation variants) -->
+    <item name="colorSurfaceContainer">@color/md_theme_dark_surfaceVariant</item>
+
+    <!-- Outline -->
+    <item name="colorOutline">@color/md_theme_dark_outline</item>
+    <item name="colorOutlineVariant">@color/md_theme_dark_outlineVariant</item>
+
+    <!-- Status & Navigation Bars (transparent for edge-to-edge) -->
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:windowLightNavigationBar">false</item>
+
+    <!-- Edge-to-edge -->
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:fitsSystemWindows">false</item>
+  </style>
+
+  <!-- Dialog Theme -->
+  <style name="Theme.WirelessAdb.Dialog" parent="Theme.Material3.Dark.Dialog">
+    <item name="colorPrimary">@color/md_theme_dark_primary</item>
+    <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+    <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+    <item name="colorSurface">@color/md_theme_dark_surface</item>
+    <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:backgroundDimEnabled">true</item>
+    <item name="android:windowIsFloating">true</item>
+    <item name="android:windowLightStatusBar">false</item>
+  </style>
+
+  <!-- Overlay Theme (for status bar content) -->
+  <style name="ThemeOverlay.WirelessADB.StatusBar" parent="">
+    <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:windowLightStatusBar">false</item>
   </style>
 </resources>

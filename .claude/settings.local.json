@@ -52,7 +52,12 @@
       "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" -s 10.1.1.107:5555 shell wm size)",
       "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" -s 10.1.1.107:5555 shell \"input tap 636 500\")",
       "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" -s 10.1.1.107:5555 shell \"input tap 175 200\")",
-      "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" -s 10.1.1.107:5555 shell \"input tap 636 400\")"
+      "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" -s 10.1.1.107:5555 shell \"input tap 636 400\")",
+      "Bash(where:*)",
+      "Bash(\"C:\\\\Users\\\\Kratos\\\\scoop\\\\shims\\\\adb.exe\":*)",
+      "Bash(\"C:\\\\Users\\\\Kratos\\\\scoop\\\\shims\\\\adb.exe\" install -r \"D:/AI/Android/APK/Android-Apps/apps/wirelessadb/app/build/outputs/apk/debug/app-debug.apk\")",
+      "Bash(\"C:\\\\Users\\\\Kratos\\\\scoop\\\\shims\\\\adb.exe\" logcat -c)",
+      "Bash(\"C:\\Users\\Kratos\\scoop\\shims\\adb.exe\" logcat:*)"
     ]
   }
 }

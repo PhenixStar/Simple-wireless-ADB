@@ -34,7 +34,8 @@
           android:text="@string/theme_settings_title"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorSecondary" />
+          android:textColor="?colorSecondary"
+          android:id="@+id/themeSettingsTitle" />
 
         <!-- Theme Mode Row -->
         <LinearLayout
@@ -63,34 +64,37 @@
               android:id="@+id/themeModeSystem"
               style="@style/Widget.Material3.Button.OutlinedButton"
               android:layout_width="wrap_content"
-              android:layout_height="36dp"
+              android:layout_height="48dp"
               android:minWidth="0dp"
               android:paddingStart="12dp"
               android:paddingEnd="12dp"
               android:text="@string/theme_mode_system"
-              android:textSize="12sp" />
+              android:textSize="12sp"
+              android:contentDescription="@string/theme_mode_system" />
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/themeModeLight"
               style="@style/Widget.Material3.Button.OutlinedButton"
               android:layout_width="wrap_content"
-              android:layout_height="36dp"
+              android:layout_height="48dp"
               android:minWidth="0dp"
               android:paddingStart="12dp"
               android:paddingEnd="12dp"
               android:text="@string/theme_mode_light"
-              android:textSize="12sp" />
+              android:textSize="12sp"
+              android:contentDescription="@string/theme_mode_light" />
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/themeModeDark"
               style="@style/Widget.Material3.Button.OutlinedButton"
               android:layout_width="wrap_content"
-              android:layout_height="36dp"
+              android:layout_height="48dp"
               android:minWidth="0dp"
               android:paddingStart="12dp"
               android:paddingEnd="12dp"
               android:text="@string/theme_mode_dark"
-              android:textSize="12sp" />
+              android:textSize="12sp"
+              android:contentDescription="@string/theme_mode_dark" />
 
           </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -125,8 +129,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentBlue"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/accent_blue_primary"
                 android:contentDescription="@string/accent_blue"
@@ -135,8 +139,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentTeal"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/accent_teal_primary"
                 android:contentDescription="@string/accent_teal"
@@ -145,8 +149,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentPurple"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/accent_purple_primary"
                 android:contentDescription="@string/accent_purple"
@@ -155,8 +159,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentOrange"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/accent_orange_primary"
                 android:contentDescription="@string/accent_orange"
@@ -165,8 +169,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentPink"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/accent_pink_primary"
                 android:contentDescription="@string/accent_pink"
@@ -175,8 +179,8 @@
               <com.google.android.material.button.MaterialButton
                 android:id="@+id/accentGreen"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:backgroundTint="@color/accent_green_primary"
                 android:contentDescription="@string/accent_green"
                 app:iconSize="0dp" />
@@ -214,7 +218,8 @@
           android:text="@string/help_getting_started"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorPrimary" />
+          android:textColor="?colorPrimary"
+          android:id="@+id/helpGettingStartedTitle" />
 
         <TextView
           android:layout_width="match_parent"
@@ -251,7 +256,8 @@
           android:text="@string/help_remote_access"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorPrimary" />
+          android:textColor="?colorPrimary"
+          android:id="@+id/helpRemoteAccessTitle" />
 
         <TextView
           android:layout_width="match_parent"
@@ -288,7 +294,8 @@
           android:text="@string/help_pc_scripts"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorPrimary" />
+          android:textColor="?colorPrimary"
+          android:id="@+id/helpPcScriptsTitle" />
 
         <TextView
           android:layout_width="match_parent"
@@ -303,7 +310,7 @@
           android:id="@+id/downloadScriptsButton"
           style="@style/Widget.Material3.Button.OutlinedButton"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
+          android:minHeight="48dp"
           android:layout_marginTop="12dp"
           android:text="@string/btn_download_scripts" />
 
@@ -334,7 +341,8 @@
           android:text="@string/help_downloads_title"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorPrimary" />
+          android:textColor="?colorPrimary"
+          android:id="@+id/helpDownloadsTitle" />
 
         <TextView
           android:layout_width="match_parent"
@@ -348,7 +356,7 @@
           android:id="@+id/downloadAdbButton"
           style="@style/Widget.Material3.Button.TonalButton"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
+          android:minHeight="48dp"
           android:layout_marginTop="12dp"
           android:text="@string/btn_download_adb"
           app:icon="@drawable/ic_download" />
@@ -357,7 +365,7 @@
           android:id="@+id/downloadTailscaleButton"
           style="@style/Widget.Material3.Button.TonalButton"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
+          android:minHeight="48dp"
           android:layout_marginTop="8dp"
           android:text="@string/btn_download_tailscale"
           app:icon="@drawable/ic_download" />
@@ -366,7 +374,7 @@
           android:id="@+id/downloadNgrokButton"
           style="@style/Widget.Material3.Button.TonalButton"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
+          android:minHeight="48dp"
           android:layout_marginTop="8dp"
           android:text="@string/btn_download_ngrok"
           app:icon="@drawable/ic_download" />
@@ -398,7 +406,8 @@
           android:text="@string/help_split_tunnel"
           android:textSize="16sp"
           android:textStyle="bold"
-          android:textColor="?colorSecondary" />
+          android:textColor="?colorSecondary"
+          android:id="@+id/helpSplitTunnelTitle" />
 
         <TextView
           android:layout_width="match_parent"
@@ -491,7 +500,7 @@
         android:id="@+id/githubButton"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_weight="1"
         android:text="@string/btn_github"
         android:layout_marginEnd="8dp" />
@@ -500,7 +509,7 @@
         android:id="@+id/emailButton"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_weight="1"
         android:text="@string/btn_email" />
 
@@ -509,7 +518,7 @@
     <com.google.android.material.button.MaterialButton
       android:id="@+id/bugReportButton"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:minHeight="48dp"
       android:layout_marginTop="8dp"
       android:text="@string/btn_report_bug"
       app:cornerRadius="12dp" />
