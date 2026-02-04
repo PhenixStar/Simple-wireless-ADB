@@ -4,7 +4,8 @@
 
 A powerful Android utility that enables wireless ADB debugging with multiple remote access options including Tailscale VPN, Warpgate SSH tunnels, and P2P token-based connections. Features a modern Material 3 UI with theme customization.
 
-[![Release](https://img.shields.io/github/v/release/Danz17/Simple-wireless-ADB)](https://github.com/Danz17/Simple-wireless-ADB/releases)
+[![CI](https://github.com/PhenixStar/Simple-wireless-ADB/actions/workflows/ci.yml/badge.svg)](https://github.com/PhenixStar/Simple-wireless-ADB/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/PhenixStar/Simple-wireless-ADB)](https://github.com/PhenixStar/Simple-wireless-ADB/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-8.0%2B-green.svg)](https://developer.android.com)
 
@@ -68,7 +69,7 @@ A powerful Android utility that enables wireless ADB debugging with multiple rem
 
 ## Installation
 
-1. Download the latest APK from [Releases](https://github.com/Danz17/Simple-wireless-ADB/releases)
+1. Download the latest APK from [Releases](https://github.com/PhenixStar/Simple-wireless-ADB/releases)
 2. Install on your device
 3. Grant root/Shizuku permissions when prompted
 4. Enable wireless ADB from the Dashboard
@@ -153,7 +154,7 @@ RootADB Pro does **NOT** collect any personal data. All settings are stored loca
 
 ```bash
 # Clone the repo
-git clone https://github.com/Danz17/Simple-wireless-ADB.git
+git clone https://github.com/PhenixStar/Simple-wireless-ADB.git
 cd Simple-wireless-ADB
 
 # Build debug APK
