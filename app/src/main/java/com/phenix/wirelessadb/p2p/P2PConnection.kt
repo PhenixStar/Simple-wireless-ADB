@@ -238,19 +238,40 @@ class P2PConnection {
         remoteAddress = punchResult.remoteAddress
         _state.value = ConnectionState.CONNECTED
 
-        // Start keepalive
-        keepaliveJob = holePuncher.startKeepalive(
-          punchResult.socket,
-          punchResult.remoteAddress!!,
-          sessionId,
-          scope
-        )
+        try {
+          // Start keepalive
+          keepaliveJob = holePuncher.startKeepalive(
+            punchResult.socket,
+            punchResult.remoteAddress!!,
+            sessionId,
+            scope
+          )
 
-        // Start UDP tunnel for ADB traffic
-        startTunnel()
+          // Start UDP tunnel for ADB traffic
+          startTunnel()
 
-        Log.i(TAG, "P2P connected successfully!")
-        true
+          Log.i(TAG, "P2P connected successfully!")
+          true
+        } catch (e: Exception) {
+          // Clean up resources if tunnel/keepalive setup fails
+          Log.e(TAG, "Failed to start tunnel/keepalive: ${e.message}", e)
+          try {
+            keepaliveJob?.cancel()
+            keepaliveJob = null
+          } catch (ex: Exception) {
+            Log.w(TAG, "Error cancelling keepalive during cleanup: ${ex.message}", ex)
+          }
+          try {
+            punchSocket?.close()
+            punchSocket = null
+          } catch (ex: Exception) {
+            Log.w(TAG, "Error closing punch socket during cleanup: ${ex.message}", ex)
+          }
+          remoteAddress = null
+          _error.value = "Failed to start connection: ${e.message}"
+          _state.value = ConnectionState.ERROR
+          false
+        }
       } else {
         _error.value = punchResult.errorMessage ?: "Hole punch failed"
         _state.value = ConnectionState.ERROR
@@ -260,6 +281,20 @@ class P2PConnection {
       Log.e(TAG, "Connection failed: ${e.message}", e)
       _error.value = "Connection failed: ${e.message}"
       _state.value = ConnectionState.ERROR
+      // Ensure cleanup if any resources were partially allocated
+      try {
+        keepaliveJob?.cancel()
+        keepaliveJob = null
+      } catch (ex: Exception) {
+        Log.w(TAG, "Error cancelling keepalive during error cleanup: ${ex.message}", ex)
+      }
+      try {
+        punchSocket?.close()
+        punchSocket = null
+      } catch (ex: Exception) {
+        Log.w(TAG, "Error closing punch socket during error cleanup: ${ex.message}", ex)
+      }
+      remoteAddress = null
       false
     }
   }
@@ -530,11 +565,14 @@ class P2PConnection {
 
   /**
    * Clean up when done.
+   * Cancels all coroutines first, then closes network resources.
    */
   fun destroy() {
     try {
-      disconnect()
+      // Cancel scope first to stop all child coroutines
       scope.cancel()
+      // Then clean up network resources
+      disconnect()
     } catch (e: Exception) {
       Log.e(TAG, "Error during destroy: ${e.message}", e)
     }
