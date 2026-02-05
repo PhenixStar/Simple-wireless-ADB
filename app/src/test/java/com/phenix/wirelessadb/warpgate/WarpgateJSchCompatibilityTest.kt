@@ -49,7 +49,7 @@ class WarpgateJSchCompatibilityTest {
   @Test
   fun `JSch uses correct package name`() {
     val jsch = JSch()
-    val packageName = jsch.javaClass.`package`.name
+    val packageName = jsch.javaClass.`package`?.name
     assertEquals("com.jcraft.jsch", packageName)
   }
 
