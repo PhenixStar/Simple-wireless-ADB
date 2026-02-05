@@ -196,8 +196,23 @@ class P2PConnection {
 
     val localStun = stunResult!!
 
-    // Use peer's session ID for the connection
-    sessionId = peerInfo.sessionId.hexToByteArray()
+    try {
+      // Use peer's session ID for the connection
+      sessionId = peerInfo.sessionId.hexToByteArray()
+
+      // Validate session ID was parsed correctly
+      if (sessionId.isEmpty()) {
+        Log.e(TAG, "Invalid session ID format")
+        _error.value = "Invalid session ID format"
+        _state.value = ConnectionState.ERROR
+        return@withContext false
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to parse session ID: ${e.message}", e)
+      _error.value = "Invalid session ID: ${e.message}"
+      _state.value = ConnectionState.ERROR
+      return@withContext false
+    }
 
     _state.value = ConnectionState.PUNCHING
     Log.i(TAG, "Connecting to peer: ${peerInfo.externalIp}:${peerInfo.externalPort}")
@@ -243,7 +258,7 @@ class P2PConnection {
       }
     } catch (e: Exception) {
       Log.e(TAG, "Connection failed: ${e.message}", e)
-      _error.value = e.message
+      _error.value = "Connection failed: ${e.message}"
       _state.value = ConnectionState.ERROR
       false
     }
@@ -261,11 +276,13 @@ class P2PConnection {
     }
 
     _state.value = ConnectionState.WAITING_FOR_PEER
+    var tempSocket: DatagramSocket? = null
 
     try {
       withTimeout(timeoutMs) {
         // Keep the STUN-bound socket open and wait for incoming packets
         val socket = DatagramSocket(stunResult!!.localPort)
+        tempSocket = socket
         socket.soTimeout = 1000
 
         var connected = false
@@ -290,6 +307,7 @@ class P2PConnection {
               socket.send(DatagramPacket(ack, ack.size, packet.address, packet.port))
 
               punchSocket = socket
+              tempSocket = null // Transfer ownership, don't close in finally
               remoteAddress = InetSocketAddress(packet.address, packet.port)
               _state.value = ConnectionState.CONNECTED
               connected = true
@@ -313,9 +331,18 @@ class P2PConnection {
       false
     } catch (e: Exception) {
       Log.e(TAG, "Error waiting for peer: ${e.message}", e)
-      _error.value = e.message
+      _error.value = "Error waiting for peer: ${e.message}"
       _state.value = ConnectionState.ERROR
       false
+    } finally {
+      // Clean up socket if connection failed
+      if (tempSocket != null) {
+        try {
+          tempSocket.close()
+        } catch (e: Exception) {
+          Log.w(TAG, "Error closing temporary socket: ${e.message}", e)
+        }
+      }
     }
   }
 
