@@ -153,7 +153,7 @@ class P2PConnection {
       Log.i(TAG, "STUN discovered: ${result.externalEndpoint}")
       result
     } catch (e: Exception) {
-      Log.e(TAG, "STUN failed: ${e.message}")
+      Log.e(TAG, "STUN failed: ${e.message}", e)
       _error.value = "Failed to discover external endpoint: ${e.message}"
       _state.value = ConnectionState.ERROR
       null
@@ -242,7 +242,7 @@ class P2PConnection {
         false
       }
     } catch (e: Exception) {
-      Log.e(TAG, "Connection failed: ${e.message}")
+      Log.e(TAG, "Connection failed: ${e.message}", e)
       _error.value = e.message
       _state.value = ConnectionState.ERROR
       false
@@ -307,10 +307,12 @@ class P2PConnection {
         connected
       }
     } catch (e: TimeoutCancellationException) {
+      Log.w(TAG, "Peer connection timed out")
       _error.value = "Peer connection timed out"
       _state.value = ConnectionState.ERROR
       false
     } catch (e: Exception) {
+      Log.e(TAG, "Error waiting for peer: ${e.message}", e)
       _error.value = e.message
       _state.value = ConnectionState.ERROR
       false
@@ -342,12 +344,12 @@ class P2PConnection {
             }
           } catch (e: IOException) {
             if (isActive) {
-              Log.w(TAG, "Tunnel accept error: ${e.message}")
+              Log.w(TAG, "Tunnel accept error: ${e.message}", e)
             }
           }
         }
       } catch (e: Exception) {
-        Log.e(TAG, "Tunnel server error: ${e.message}")
+        Log.e(TAG, "Tunnel server error: ${e.message}", e)
         _error.value = "Tunnel failed: ${e.message}"
         _state.value = ConnectionState.ERROR
       }
@@ -402,9 +404,13 @@ class P2PConnection {
       readJob.join()
       writeJob.cancel()
     } catch (e: Exception) {
-      Log.w(TAG, "Tunnel client error: ${e.message}")
+      Log.w(TAG, "Tunnel client error: ${e.message}", e)
     } finally {
-      tcpSocket.close()
+      try {
+        tcpSocket.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing tunnel client socket: ${e.message}", e)
+      }
     }
   }
 
@@ -431,27 +437,44 @@ class P2PConnection {
   fun disconnect() {
     Log.i(TAG, "Disconnecting P2P connection")
 
-    keepaliveJob?.cancel()
-    tunnelJob?.cancel()
+    try {
+      keepaliveJob?.cancel()
+      tunnelJob?.cancel()
 
-    tunnelServer?.close()
-    punchSocket?.close()
+      try {
+        tunnelServer?.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing tunnel server: ${e.message}", e)
+      }
 
-    tunnelServer = null
-    punchSocket = null
-    remoteAddress = null
-    stunResult = null
+      try {
+        punchSocket?.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing punch socket: ${e.message}", e)
+      }
 
-    _state.value = ConnectionState.DISCONNECTED
-    _bytesTransferred.value = 0
+      tunnelServer = null
+      punchSocket = null
+      remoteAddress = null
+      stunResult = null
+
+      _state.value = ConnectionState.DISCONNECTED
+      _bytesTransferred.value = 0
+    } catch (e: Exception) {
+      Log.e(TAG, "Error during disconnect: ${e.message}", e)
+    }
   }
 
   /**
    * Clean up when done.
    */
   fun destroy() {
-    disconnect()
-    scope.cancel()
+    try {
+      disconnect()
+      scope.cancel()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error during destroy: ${e.message}", e)
+    }
   }
 
   // Utility extensions
@@ -460,14 +483,19 @@ class P2PConnection {
   }
 
   private fun String.hexToByteArray(): ByteArray {
-    val len = length
-    val data = ByteArray(len / 2)
-    var i = 0
-    while (i < len) {
-      data[i / 2] = ((Character.digit(this[i], 16) shl 4) +
-        Character.digit(this[i + 1], 16)).toByte()
-      i += 2
+    return try {
+      val len = length
+      val data = ByteArray(len / 2)
+      var i = 0
+      while (i < len) {
+        data[i / 2] = ((Character.digit(this[i], 16) shl 4) +
+          Character.digit(this[i + 1], 16)).toByte()
+        i += 2
+      }
+      data
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to parse hex string: ${e.message}", e)
+      ByteArray(0)
     }
-    return data
   }
 }
