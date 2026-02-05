@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "001-improve-code-quality-based-on-analysis",
+  "state": "building",
+  "subtasks": {
+    "completed": 3,
+    "total": 20,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Error Handling & Logging",
+    "id": null,
+    "total": 3
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 2,
+    "started_at": "2026-02-05T13:28:18.356172"
+  },
+  "last_update": "2026-02-05T13:30:54.063416"
+}

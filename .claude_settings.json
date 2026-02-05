@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis/**)",
+      "Glob(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis/**)",
+      "Grep(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis/**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis\\.auto-claude\\specs\\001-improve-code-quality-based-on-analysis/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis\\.auto-claude\\specs\\001-improve-code-quality-based-on-analysis/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\001-improve-code-quality-based-on-analysis\\.auto-claude\\specs\\001-improve-code-quality-based-on-analysis/**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Glob(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Grep(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}
