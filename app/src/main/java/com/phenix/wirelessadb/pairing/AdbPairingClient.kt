@@ -113,12 +113,13 @@ class AdbPairingClient(
    * Connect to ADB pairing service and establish TLS.
    */
   private fun connect(): Boolean {
+    var plainSocket: Socket? = null
     try {
       Log.d(TAG, "Connecting to $host:$port")
 
       // Create plain socket
-      val socket = Socket(host, port)
-      socket.tcpNoDelay = true
+      plainSocket = Socket(host, port)
+      plainSocket.tcpNoDelay = true
 
       // Initialize Conscrypt for TLS 1.3
       val sslContext = SSLContext.getInstance("TLSv1.3", Conscrypt.newProvider())
@@ -127,10 +128,10 @@ class AdbPairingClient(
       // Upgrade to TLS
       val factory = sslContext.socketFactory
       sslSocket = factory.createSocket(
-        socket,
+        plainSocket,
         host,
         port,
-        true
+        true // autoClose = true means plainSocket will be closed when sslSocket closes
       ) as SSLSocket
 
       sslSocket?.apply {
@@ -147,6 +148,15 @@ class AdbPairingClient(
     } catch (e: Exception) {
       errorMessage = "Connection failed: ${e.message}"
       Log.e(TAG, errorMessage!!, e)
+      // If SSL socket creation failed, close the plain socket
+      // (if sslSocket was successfully created, it will handle closing plainSocket due to autoClose=true)
+      if (sslSocket == null) {
+        try {
+          plainSocket?.close()
+        } catch (closeException: Exception) {
+          Log.e(TAG, "Error closing plain socket during cleanup", closeException)
+        }
+      }
       return false
     }
   }
