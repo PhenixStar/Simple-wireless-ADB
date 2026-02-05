@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.phenix.wirelessadb.relay.AdbRelayServer
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 
 class AdbService : Service() {
 
+  private val TAG = "AdbService"
   private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
   private var relayServer: AdbRelayServer? = null
 
@@ -125,7 +127,7 @@ class AdbService : Service() {
       try {
         relayServer?.start()
       } catch (e: Exception) {
-        // Log error
+        Log.e(TAG, "Failed to start relay server", e)
       }
     }
   }
