@@ -336,9 +336,9 @@ class P2PConnection {
       false
     } finally {
       // Clean up socket if connection failed
-      if (tempSocket != null) {
+      tempSocket?.let { socket ->
         try {
-          tempSocket.close()
+          socket.close()
         } catch (e: Exception) {
           Log.w(TAG, "Error closing temporary socket: ${e.message}", e)
         }
