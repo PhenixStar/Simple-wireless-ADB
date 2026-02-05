@@ -328,15 +328,29 @@ class AdbPairingClient(
 
   /**
    * Disconnect from the pairing service.
+   * Each resource is closed independently to ensure all cleanup happens even if one fails.
    */
   private fun disconnect() {
+    // Close each resource independently to prevent one failure from blocking others
     try {
       dataIn?.close()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error closing input stream", e)
+    }
+
+    try {
       dataOut?.close()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error closing output stream", e)
+    }
+
+    try {
       sslSocket?.close()
     } catch (e: Exception) {
-      Log.e(TAG, "Error during disconnect", e)
+      Log.e(TAG, "Error closing SSL socket", e)
     }
+
+    // Clear references
     dataIn = null
     dataOut = null
     sslSocket = null
