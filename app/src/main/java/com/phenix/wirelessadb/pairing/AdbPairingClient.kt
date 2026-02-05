@@ -164,7 +164,7 @@ class AdbPairingClient(
         KEYING_MATERIAL_LENGTH
       )
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to export keying material: ${e.message}")
+      Log.e(TAG, "Failed to export keying material", e)
       null
     }
   }
@@ -321,7 +321,7 @@ class AdbPairingClient(
       Log.d(TAG, "Received message type=$type, size=$size")
       return Pair(type, payload)
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to receive message: ${e.message}")
+      Log.e(TAG, "Failed to receive message", e)
       return null
     }
   }
@@ -335,7 +335,7 @@ class AdbPairingClient(
       dataOut?.close()
       sslSocket?.close()
     } catch (e: Exception) {
-      Log.w(TAG, "Error during disconnect: ${e.message}")
+      Log.e(TAG, "Error during disconnect", e)
     }
     dataIn = null
     dataOut = null
