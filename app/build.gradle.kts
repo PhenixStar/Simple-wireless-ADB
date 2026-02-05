@@ -110,8 +110,8 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
   implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
-  // JSch for SSH tunneling (Warpgate)
-  implementation("com.jcraft:jsch:0.1.55")
+  // JSch for SSH tunneling (Warpgate) - Updated to maintained fork
+  implementation("com.github.mwiede:jsch:2.27.7")
 
   // Shizuku for non-root privileged access
   implementation("dev.rikka.shizuku:api:13.1.5")
