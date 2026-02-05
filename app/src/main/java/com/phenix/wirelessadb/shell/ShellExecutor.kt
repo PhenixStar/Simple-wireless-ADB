@@ -53,10 +53,25 @@ object ShellExecutor {
 
   /**
    * Execute shell commands using the current backend.
+   * Commands are validated to prevent shell injection attacks.
    * @param commands Commands to execute (joined with &&)
    * @return Result with stdout on success, error on failure
    */
   suspend fun execute(vararg commands: String): Result<String> = withContext(Dispatchers.IO) {
+    // Validate commands are not empty
+    if (commands.isEmpty() || commands.any { it.isBlank() }) {
+      return@withContext Result.failure(Exception("Commands cannot be empty"))
+    }
+
+    // Validate each command for shell injection vulnerabilities
+    for (command in commands) {
+      val validation = validateCommand(command)
+      if (validation != null) {
+        return@withContext Result.failure(Exception("Invalid command: $validation"))
+      }
+    }
+
+    // Join validated commands safely
     val cmd = commands.joinToString(" && ")
     Log.d(TAG, "Executing via $backend: $cmd")
 
@@ -66,6 +81,40 @@ object ShellExecutor {
       ExecutorBackend.SHIZUKU_SHELL -> ShizukuExecutor.execute(cmd)
       ExecutorBackend.NONE -> Result.failure(Exception("No privileged backend available"))
     }
+  }
+
+  /**
+   * Validate a command for shell injection vulnerabilities.
+   * @param command Command to validate
+   * @return Error message if invalid, null if valid
+   */
+  private fun validateCommand(command: String): String? {
+    // Check for dangerous shell metacharacters that enable command injection
+    val dangerousPatterns = mapOf(
+      ";" to "contains command separator (;)",
+      "|" to "contains pipe operator (|)",
+      "&&" to "contains AND operator (&&)",
+      "||" to "contains OR operator (||)",
+      "`" to "contains backtick substitution",
+      "\$(" to "contains command substitution \$()",
+      "\n" to "contains newline",
+      "\r" to "contains carriage return",
+      ">" to "contains output redirection (>)",
+      "<" to "contains input redirection (<)"
+    )
+
+    for ((pattern, reason) in dangerousPatterns) {
+      if (command.contains(pattern)) {
+        return reason
+      }
+    }
+
+    // Check for subshell execution
+    if (command.contains('(') && command.contains(')')) {
+      return "contains subshell syntax"
+    }
+
+    return null
   }
 
   /**
