@@ -67,55 +67,11 @@ class P2PManager private constructor(private val context: Context) {
    * Generate a new P2P token for this device.
    * Performs STUN discovery to get external endpoint for NAT traversal.
    */
-  suspend fun generateToken(): Result<P2PToken> = withContext(Dispatchers.IO) {
-    try {
-      _isLoading.postValue(true)
-      _error.postValue(null)
-
-      // Revoke any existing token
-      revokeToken()
-
-      // Step 1: Discover external endpoint via STUN
-      Log.i(TAG, "Discovering external endpoint via STUN...")
-      val stunResult = try {
-        stunClient.discoverExternalEndpoint()
-      } catch (e: Exception) {
-        Log.w(TAG, "STUN discovery failed: ${e.message}")
-        null
-      }
-      cachedStunResult = stunResult
-
-      // Step 2: Get device fingerprint
-      val deviceHash = DeviceFingerprint.computeDeviceHash(context)
-
-      // Step 3: Generate token with external endpoint info
-      val token = TokenGenerator.generate(deviceHash).let { baseToken ->
-        if (stunResult != null) {
-          baseToken.copy(
-            externalEndpoint = "${stunResult.externalIp}:${stunResult.externalPort}"
-          )
-        } else {
-          baseToken
-        }
-      }
-
-      _currentToken.postValue(token)
-      _connectionState.postValue(P2PState.TOKEN_READY)
-
-      // Step 4: Start waiting for peer connection in background
-      scope.launch {
-        waitForPeerConnection()
-      }
-
-      Log.i(TAG, "Token generated: ${token.masked()}, endpoint: ${token.externalEndpoint ?: "unknown"}")
-      Result.success(token)
-    } catch (e: Exception) {
-      Log.e(TAG, "Failed to generate token", e)
-      _error.postValue("Failed to generate token: ${e.message}")
-      Result.failure(e)
-    } finally {
-      _isLoading.postValue(false)
-    }
+  suspend fun generateToken(): Result<P2PToken> {
+    return generateTokenInternal(
+      tokenType = "Token",
+      tokenGenerator = { deviceHash -> TokenGenerator.generate(deviceHash) }
+    )
   }
 
   /**
@@ -153,7 +109,21 @@ class P2PManager private constructor(private val context: Context) {
    * Generate a persistent token (for trusted device).
    * Performs STUN discovery for NAT traversal support.
    */
-  suspend fun generatePersistentToken(): Result<P2PToken> = withContext(Dispatchers.IO) {
+  suspend fun generatePersistentToken(): Result<P2PToken> {
+    return generateTokenInternal(
+      tokenType = "Persistent token",
+      tokenGenerator = { deviceHash -> TokenGenerator.generatePersistent(deviceHash) }
+    )
+  }
+
+  /**
+   * Internal helper for token generation logic (both regular and persistent).
+   * Extracts common code to avoid duplication.
+   */
+  private suspend fun generateTokenInternal(
+    tokenType: String,
+    tokenGenerator: (String) -> P2PToken
+  ): Result<P2PToken> = withContext(Dispatchers.IO) {
     try {
       _isLoading.postValue(true)
       _error.postValue(null)
@@ -174,8 +144,8 @@ class P2PManager private constructor(private val context: Context) {
       // Step 2: Get device fingerprint
       val deviceHash = DeviceFingerprint.computeDeviceHash(context)
 
-      // Step 3: Generate persistent token with external endpoint info
-      val token = TokenGenerator.generatePersistent(deviceHash).let { baseToken ->
+      // Step 3: Generate token with external endpoint info
+      val token = tokenGenerator(deviceHash).let { baseToken ->
         if (stunResult != null) {
           baseToken.copy(
             externalEndpoint = "${stunResult.externalIp}:${stunResult.externalPort}"
@@ -193,10 +163,10 @@ class P2PManager private constructor(private val context: Context) {
         waitForPeerConnection()
       }
 
-      Log.i(TAG, "Persistent token generated: ${token.masked()}, endpoint: ${token.externalEndpoint ?: "unknown"}")
+      Log.i(TAG, "$tokenType generated: ${token.masked()}, endpoint: ${token.externalEndpoint ?: "unknown"}")
       Result.success(token)
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to generate persistent token", e)
+      Log.e(TAG, "Failed to generate token", e)
       _error.postValue("Failed to generate token: ${e.message}")
       Result.failure(e)
     } finally {

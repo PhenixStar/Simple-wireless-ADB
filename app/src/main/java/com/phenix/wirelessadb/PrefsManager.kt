@@ -36,6 +36,16 @@ object PrefsManager {
   private const val KEY_WARPGATE_TARGET = "warpgate_target"
   private const val KEY_WARPGATE_LOCAL_PORT = "warpgate_local_port"
 
+  // Auto-reconnect settings
+  private const val KEY_AUTO_RECONNECT_ENABLED = "auto_reconnect_enabled"
+  private const val KEY_AUTO_RECONNECT_DELAY = "auto_reconnect_delay"
+  private const val KEY_AUTO_RECONNECT_MAX_RETRIES = "auto_reconnect_max_retries"
+  private const val DEFAULT_AUTO_RECONNECT_DELAY = 5000 // 5 seconds
+  private const val DEFAULT_AUTO_RECONNECT_MAX_RETRIES = 3
+
+  // Trusted networks settings
+  private const val KEY_TRUSTED_NETWORKS = "trusted_networks"
+
   private fun getPrefs(context: Context): SharedPreferences {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
   }
@@ -148,5 +158,55 @@ object PrefsManager {
 
   fun setAccentColor(context: Context, color: AccentColor) {
     getPrefs(context).edit().putInt(KEY_ACCENT_COLOR, color.ordinal).apply()
+  }
+
+  // Auto-reconnect Configuration
+  fun isAutoReconnectEnabled(context: Context): Boolean {
+    return getPrefs(context).getBoolean(KEY_AUTO_RECONNECT_ENABLED, true)
+  }
+
+  fun setAutoReconnectEnabled(context: Context, enabled: Boolean) {
+    getPrefs(context).edit().putBoolean(KEY_AUTO_RECONNECT_ENABLED, enabled).apply()
+  }
+
+  fun getAutoReconnectDelay(context: Context): Int {
+    return getPrefs(context).getInt(KEY_AUTO_RECONNECT_DELAY, DEFAULT_AUTO_RECONNECT_DELAY)
+  }
+
+  fun setAutoReconnectDelay(context: Context, delay: Int) {
+    getPrefs(context).edit().putInt(KEY_AUTO_RECONNECT_DELAY, delay).apply()
+  }
+
+  fun getAutoReconnectMaxRetries(context: Context): Int {
+    return getPrefs(context).getInt(KEY_AUTO_RECONNECT_MAX_RETRIES, DEFAULT_AUTO_RECONNECT_MAX_RETRIES)
+  }
+
+  fun setAutoReconnectMaxRetries(context: Context, retries: Int) {
+    getPrefs(context).edit().putInt(KEY_AUTO_RECONNECT_MAX_RETRIES, retries).apply()
+  }
+
+  // Trusted Networks
+  fun getTrustedNetworks(context: Context): Set<String> {
+    return getPrefs(context).getStringSet(KEY_TRUSTED_NETWORKS, emptySet()) ?: emptySet()
+  }
+
+  fun setTrustedNetworks(context: Context, networks: Set<String>) {
+    getPrefs(context).edit().putStringSet(KEY_TRUSTED_NETWORKS, networks).apply()
+  }
+
+  fun addTrustedNetwork(context: Context, ssid: String) {
+    val networks = getTrustedNetworks(context).toMutableSet()
+    networks.add(ssid)
+    setTrustedNetworks(context, networks)
+  }
+
+  fun removeTrustedNetwork(context: Context, ssid: String) {
+    val networks = getTrustedNetworks(context).toMutableSet()
+    networks.remove(ssid)
+    setTrustedNetworks(context, networks)
+  }
+
+  fun isTrustedNetwork(context: Context, ssid: String): Boolean {
+    return getTrustedNetworks(context).contains(ssid)
   }
 }
