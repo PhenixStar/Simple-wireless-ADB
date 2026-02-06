@@ -3,12 +3,15 @@ package com.phenix.wirelessadb.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
+import android.widget.Toast
 import com.phenix.wirelessadb.AdbManager
 import com.phenix.wirelessadb.R
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +50,7 @@ class AdbWidgetProvider : AppWidgetProvider() {
       }
       ACTION_COPY_COMMAND -> {
         Log.d(TAG, "onReceive: Copy command action received")
-        // TODO: Implement copy to clipboard (next subtask)
+        handleCopyCommand(context)
       }
     }
   }
@@ -134,6 +137,54 @@ class AdbWidgetProvider : AppWidgetProvider() {
   }
 
   /**
+   * Handles copy command button click.
+   * Copies the ADB connect command to clipboard and shows a toast notification.
+   */
+  private fun handleCopyCommand(context: Context) {
+    CoroutineScope(Dispatchers.IO).launch {
+      try {
+        // Get current status
+        val status = AdbManager.getStatus(context)
+        Log.d(TAG, "handleCopyCommand: Current status = enabled:${status.enabled}, ip:${status.ip}")
+
+        // Check if ADB is enabled and has an IP address
+        if (status.enabled && status.ip != null) {
+          // Format the ADB connect command
+          val command = "adb connect ${status.ip}:${status.port}"
+          Log.d(TAG, "handleCopyCommand: Command = $command")
+
+          // Copy to clipboard on main thread
+          withContext(Dispatchers.Main) {
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("ADB Command", command)
+            clipboard.setPrimaryClip(clip)
+
+            // Show toast notification
+            Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "handleCopyCommand: Command copied to clipboard")
+          }
+        } else {
+          // ADB is disabled or no WiFi connection - show warning
+          withContext(Dispatchers.Main) {
+            val message = if (!status.enabled) {
+              "ADB is disabled"
+            } else {
+              "No WiFi connection"
+            }
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "handleCopyCommand: Cannot copy - $message")
+          }
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "handleCopyCommand: Failed to copy command", e)
+        withContext(Dispatchers.Main) {
+          Toast.makeText(context, "Failed to copy command", Toast.LENGTH_SHORT).show()
+        }
+      }
+    }
+  }
+
+  /**
    * Updates a single widget instance with current ADB status.
    * Fetches status asynchronously and updates UI on main thread.
    */
@@ -211,7 +262,17 @@ class AdbWidgetProvider : AppWidgetProvider() {
           )
           views.setOnClickPendingIntent(R.id.widgetToggleButton, togglePendingIntent)
 
-          // TODO: Set up PendingIntent for copy button (next subtask)
+          // Set up PendingIntent for copy button
+          val copyIntent = Intent(context, AdbWidgetProvider::class.java).apply {
+            action = ACTION_COPY_COMMAND
+          }
+          val copyPendingIntent = PendingIntent.getBroadcast(
+            context,
+            1,
+            copyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+          )
+          views.setOnClickPendingIntent(R.id.widgetCopyButton, copyPendingIntent)
 
           // Update widget on main thread
           appWidgetManager.updateAppWidget(appWidgetId, views)
