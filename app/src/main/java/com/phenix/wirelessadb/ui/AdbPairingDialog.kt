@@ -61,11 +61,37 @@ class AdbPairingDialog : DialogFragment() {
       dismiss()
     }
 
+    // Scan QR button
+    binding.btnScanQr.setOnClickListener {
+      launchQrScanner()
+    }
+
     // Pair button
     binding.btnPair.setOnClickListener {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         startPairing()
       }
+    }
+  }
+
+  /**
+   * Launch QR scanner dialog to scan pairing code.
+   */
+  private fun launchQrScanner() {
+    try {
+      QrScannerDialog.newInstance { parsedData ->
+        // Auto-fill port and code from scanned QR
+        binding.portInput.setText(parsedData.port.toString())
+        binding.codeInput.setText(parsedData.code)
+
+        // Clear any previous errors
+        binding.portLayout.error = null
+        binding.codeLayout.error = null
+        binding.errorText.isVisible = false
+      }.show(childFragmentManager, QrScannerDialog.TAG)
+    } catch (e: Exception) {
+      // Handle scanner launch error gracefully
+      showError(getString(R.string.scanner_error))
     }
   }
 
