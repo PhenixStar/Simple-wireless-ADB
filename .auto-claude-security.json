@@ -128,37 +128,15 @@
     "zsh"
   ],
   "stack_commands": [
-    "ant",
     "gradle",
     "gradlew",
-    "ipython",
-    "jar",
-    "java",
-    "javac",
-    "jupyter",
     "kotlin",
-    "kotlinc",
-    "maven",
-    "mvn",
-    "node",
-    "notebook",
-    "npm",
-    "npx",
-    "pdb",
-    "pip",
-    "pip3",
-    "pipx",
-    "pudb",
-    "python",
-    "python3"
+    "kotlinc"
   ],
   "script_commands": [],
   "custom_commands": [],
   "detected_stack": {
     "languages": [
-      "python",
-      "javascript",
-      "java",
       "kotlin"
     ],
     "package_managers": [
@@ -178,8 +156,7 @@
     "cargo_aliases": [],
     "shell_scripts": []
   },
-  "project_dir": "D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb",
-  "created_at": "2026-02-05T12:56:49.824459",
-  "project_hash": "0d6be561318e22002fe7a184fb411324",
-  "inherited_from": "D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb"
+  "project_dir": "D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\008-connection-statistics-dashboard",
+  "created_at": "2026-02-07T04:33:20.892364",
+  "project_hash": "68fbfa2ecdc6d99c28b8eaf3a5197bdf"
 }

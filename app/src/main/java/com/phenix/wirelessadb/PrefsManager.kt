@@ -2,7 +2,9 @@ package com.phenix.wirelessadb
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import com.phenix.wirelessadb.model.ConnectionMode
+import com.phenix.wirelessadb.model.ConnectionStatistics
 import com.phenix.wirelessadb.theme.AccentColor
 import com.phenix.wirelessadb.theme.ThemeMode
 import com.phenix.wirelessadb.warpgate.WarpgateConfig
@@ -35,6 +37,9 @@ object PrefsManager {
   private const val KEY_WARPGATE_PASSWORD = "warpgate_password"
   private const val KEY_WARPGATE_TARGET = "warpgate_target"
   private const val KEY_WARPGATE_LOCAL_PORT = "warpgate_local_port"
+
+  // Connection statistics
+  private const val KEY_STATISTICS = "connection_statistics"
 
   private fun getPrefs(context: Context): SharedPreferences {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -148,5 +153,24 @@ object PrefsManager {
 
   fun setAccentColor(context: Context, color: AccentColor) {
     getPrefs(context).edit().putInt(KEY_ACCENT_COLOR, color.ordinal).apply()
+  }
+
+  // Connection Statistics
+  fun getStatistics(context: Context): ConnectionStatistics {
+    val json = getPrefs(context).getString(KEY_STATISTICS, null)
+    return if (json != null) {
+      try {
+        Gson().fromJson(json, ConnectionStatistics::class.java)
+      } catch (e: Exception) {
+        ConnectionStatistics.DEFAULT
+      }
+    } else {
+      ConnectionStatistics.DEFAULT
+    }
+  }
+
+  fun setStatistics(context: Context, statistics: ConnectionStatistics) {
+    val json = Gson().toJson(statistics)
+    getPrefs(context).edit().putString(KEY_STATISTICS, json).apply()
   }
 }
