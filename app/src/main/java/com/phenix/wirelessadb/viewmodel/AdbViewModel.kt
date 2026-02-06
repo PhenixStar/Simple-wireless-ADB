@@ -156,6 +156,8 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
 
       result.onSuccess {
         refreshStatus()
+        // Notify widgets and other components about ADB status change
+        com.phenix.wirelessadb.widget.AdbWidgetProvider.notifyStatusChanged(context)
       }.onFailure { e ->
         _error.value = e.message
       }

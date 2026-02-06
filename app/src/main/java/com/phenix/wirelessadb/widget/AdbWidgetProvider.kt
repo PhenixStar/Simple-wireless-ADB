@@ -3,15 +3,18 @@ package com.phenix.wirelessadb.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.phenix.wirelessadb.AdbManager
 import com.phenix.wirelessadb.R
 import kotlinx.coroutines.CoroutineScope
@@ -34,11 +37,38 @@ class AdbWidgetProvider : AppWidgetProvider() {
     private const val TAG = "AdbWidgetProvider"
     const val ACTION_TOGGLE_ADB = "com.phenix.wirelessadb.widget.TOGGLE_ADB"
     const val ACTION_COPY_COMMAND = "com.phenix.wirelessadb.widget.COPY_COMMAND"
+    const val ACTION_ADB_STATUS_CHANGED = "com.phenix.wirelessadb.ADB_STATUS_CHANGED"
+
+    /**
+     * Broadcasts ADB status change to all widget instances.
+     * This should be called whenever ADB is enabled/disabled from any part of the app.
+     */
+    fun notifyStatusChanged(context: Context) {
+      Log.d(TAG, "notifyStatusChanged: Broadcasting ADB status change")
+      val intent = Intent(ACTION_ADB_STATUS_CHANGED)
+      LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+    }
+
+    /**
+     * Manually updates all widget instances.
+     * Useful for forcing a refresh from external components.
+     */
+    fun updateAllWidgets(context: Context) {
+      Log.d(TAG, "updateAllWidgets: Manually updating all widgets")
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+      val componentName = ComponentName(context, AdbWidgetProvider::class.java)
+      val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+      val intent = Intent(context, AdbWidgetProvider::class.java).apply {
+        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
+      }
+      context.sendBroadcast(intent)
+    }
   }
 
   /**
    * Called when widget receives a broadcast.
-   * Handles custom actions like toggle and copy.
+   * Handles custom actions like toggle, copy, and status change notifications.
    */
   override fun onReceive(context: Context, intent: Intent) {
     super.onReceive(context, intent)
@@ -51,6 +81,10 @@ class AdbWidgetProvider : AppWidgetProvider() {
       ACTION_COPY_COMMAND -> {
         Log.d(TAG, "onReceive: Copy command action received")
         handleCopyCommand(context)
+      }
+      ACTION_ADB_STATUS_CHANGED -> {
+        Log.d(TAG, "onReceive: ADB status changed - updating all widgets")
+        updateAllWidgetsInstances(context)
       }
     }
   }
@@ -70,20 +104,53 @@ class AdbWidgetProvider : AppWidgetProvider() {
     }
   }
 
+  // Broadcast receiver for real-time status updates
+  private var statusChangeReceiver: BroadcastReceiver? = null
+
   /**
    * Called when the first widget instance is added.
+   * Registers broadcast receiver for real-time ADB status updates.
    */
   override fun onEnabled(context: Context) {
     super.onEnabled(context)
-    // Widget is now active - future: register broadcast receivers for real-time updates
+    Log.d(TAG, "onEnabled: First widget added - registering status change receiver")
+
+    // Register receiver for ADB status changes
+    if (statusChangeReceiver == null) {
+      statusChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+          if (intent.action == ACTION_ADB_STATUS_CHANGED) {
+            Log.d(TAG, "statusChangeReceiver: ADB status changed - updating widgets")
+            updateAllWidgetsInstances(context)
+          }
+        }
+      }
+      LocalBroadcastManager.getInstance(context).registerReceiver(
+        statusChangeReceiver!!,
+        IntentFilter(ACTION_ADB_STATUS_CHANGED)
+      )
+      Log.d(TAG, "onEnabled: Status change receiver registered")
+    }
   }
 
   /**
    * Called when the last widget instance is removed.
+   * Unregisters broadcast receiver.
    */
   override fun onDisabled(context: Context) {
     super.onDisabled(context)
-    // No more widgets - future: unregister broadcast receivers
+    Log.d(TAG, "onDisabled: Last widget removed - unregistering status change receiver")
+
+    // Unregister receiver
+    statusChangeReceiver?.let {
+      try {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(it)
+        Log.d(TAG, "onDisabled: Status change receiver unregistered")
+      } catch (e: Exception) {
+        Log.e(TAG, "onDisabled: Failed to unregister receiver", e)
+      }
+      statusChangeReceiver = null
+    }
   }
 
   /**
@@ -96,7 +163,7 @@ class AdbWidgetProvider : AppWidgetProvider() {
 
   /**
    * Handles toggle ADB button click.
-   * Fetches current status, toggles ADB state, and updates all widgets.
+   * Fetches current status, toggles ADB state, broadcasts change, and updates all widgets.
    */
   private fun handleToggleAdb(context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
@@ -114,25 +181,39 @@ class AdbWidgetProvider : AppWidgetProvider() {
           AdbManager.enable(status.port)
         }
 
-        // Check result
+        // Check result and broadcast change
         if (result.isSuccess) {
-          Log.d(TAG, "handleToggleAdb: Toggle successful")
+          Log.d(TAG, "handleToggleAdb: Toggle successful - broadcasting status change")
+          // Broadcast status change to notify other components (like ViewModel, other widgets, etc.)
+          notifyStatusChanged(context)
         } else {
           Log.e(TAG, "handleToggleAdb: Toggle failed - ${result.exceptionOrNull()?.message}")
         }
 
         // Update all widgets to reflect new state
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName = ComponentName(context, AdbWidgetProvider::class.java)
-        val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
-
-        Log.d(TAG, "handleToggleAdb: Updating ${appWidgetIds.size} widget(s)")
-        for (appWidgetId in appWidgetIds) {
-          updateWidget(context, appWidgetManager, appWidgetId)
-        }
+        updateAllWidgetsInstances(context)
       } catch (e: Exception) {
         Log.e(TAG, "handleToggleAdb: Failed to toggle ADB", e)
       }
+    }
+  }
+
+  /**
+   * Updates all widget instances.
+   * Called when ADB status changes or broadcast is received.
+   */
+  private fun updateAllWidgetsInstances(context: Context) {
+    try {
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+      val componentName = ComponentName(context, AdbWidgetProvider::class.java)
+      val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+
+      Log.d(TAG, "updateAllWidgetsInstances: Updating ${appWidgetIds.size} widget(s)")
+      for (appWidgetId in appWidgetIds) {
+        updateWidget(context, appWidgetManager, appWidgetId)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "updateAllWidgetsInstances: Failed to update widgets", e)
     }
   }
 
