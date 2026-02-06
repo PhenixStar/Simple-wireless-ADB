@@ -357,7 +357,10 @@
   <string name="stats_uptime">Uptime</string>
   <string name="stats_total_connections">Total Connections</string>
   <string name="stats_reliability">Reliability Score</string>
+  <string name="stats_reliability_format">%.1f%%</string>
   <string name="stats_recent_connections">Recent Connections</string>
   <string name="stats_no_data">No data yet</string>
   <string name="stats_no_data_description">Connection statistics will appear here once ADB is enabled</string>
+  <string name="stats_duration_format">Duration: %1$s</string>
+  <string name="stats_active">Active</string>
 </resources>

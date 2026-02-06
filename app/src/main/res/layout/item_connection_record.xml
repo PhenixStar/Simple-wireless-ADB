@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Connection Record List Item -->
+<com.google.android.material.card.MaterialCardView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginHorizontal="16dp"
+  android:layout_marginVertical="4dp"
+  app:cardCornerRadius="12dp"
+  app:cardElevation="0dp"
+  app:strokeWidth="1dp"
+  app:strokeColor="?colorOutline"
+  app:cardBackgroundColor="?colorSurfaceVariant">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:gravity="center_vertical">
+
+    <!-- Connection Icon -->
+    <ImageView
+      android:id="@+id/connectionIcon"
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:src="@drawable/ic_status_active"
+      android:tint="?colorPrimary"
+      android:background="@drawable/bg_icon_container_surface"
+      android:padding="8dp"
+      android:contentDescription="@string/stats_recent_connections" />
+
+    <!-- Connection Info -->
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:layout_marginStart="12dp"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/connectionTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jan 15, 2025 14:30"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="?colorOnSurface"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+      <TextView
+        android:id="@+id/connectionDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duration: 2h 30m"
+        android:textSize="12sp"
+        android:textColor="?colorOnSurfaceVariant"
+        android:layout_marginTop="2dp" />
+
+      <TextView
+        android:id="@+id/connectionMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Local WiFi"
+        android:textSize="11sp"
+        android:textColor="?colorOnSurfaceVariant"
+        android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+    <!-- Status Icon -->
+    <ImageView
+      android:id="@+id/statusIcon"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:src="@drawable/ic_check"
+      android:tint="?colorPrimary"
+      android:contentDescription="@string/status_connected" />
+
+  </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
