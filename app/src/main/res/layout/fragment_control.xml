@@ -321,6 +321,18 @@
             android:contentDescription="@string/cd_notification_toggle"
             android:accessibilityLiveRegion="polite" />
 
+          <!-- Health Monitoring -->
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/healthMonitoringSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/settings_health_monitoring"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurface"
+            android:contentDescription="@string/cd_health_monitoring_toggle"
+            android:accessibilityLiveRegion="polite" />
+
         </LinearLayout>
 
       </LinearLayout>

@@ -301,6 +301,33 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
   fun getPort(): Int = PrefsManager.getPort(context)
   fun getRelayPort(): Int = PrefsManager.getRelayPort(context)
 
+  // Health Monitoring (v1.3.0)
+  fun getHealthCheckInterval(): Long = PrefsManager.getHealthCheckInterval(context)
+  fun setHealthCheckInterval(interval: Long) = PrefsManager.setHealthCheckInterval(context, interval)
+
+  fun isAutoReconnectEnabled(): Boolean = PrefsManager.isAutoReconnectEnabled(context)
+  fun setAutoReconnectEnabled(enabled: Boolean) {
+    PrefsManager.setAutoReconnectEnabled(context, enabled)
+    if (enabled && _adbStatus.value?.enabled == true) {
+      startHealthMonitoring()
+    } else {
+      stopHealthMonitoring()
+    }
+  }
+
+  fun startHealthMonitoring() {
+    viewModelScope.launch {
+      val interval = getHealthCheckInterval()
+      com.phenix.wirelessadb.health.ConnectionHealthManager.startMonitoring(context, interval / 1000)
+    }
+  }
+
+  fun stopHealthMonitoring() {
+    viewModelScope.launch {
+      com.phenix.wirelessadb.health.ConnectionHealthManager.stopMonitoring(context)
+    }
+  }
+
   // P2P Token methods (v1.2.0)
   fun generateP2PToken() {
     viewModelScope.launch {

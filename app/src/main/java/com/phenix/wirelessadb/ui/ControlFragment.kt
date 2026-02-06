@@ -176,6 +176,14 @@ class ControlFragment : Fragment() {
           viewModel.showDevNotification()
         }
       }
+
+      // Health monitoring switch
+      healthMonitoringSwitch.isChecked = viewModel.isAutoReconnectEnabled()
+      healthMonitoringSwitch.setOnCheckedChangeListener { _, checked ->
+        healthMonitoringSwitch.setStateDescription(getString(R.string.settings_health_monitoring), checked)
+        healthMonitoringSwitch.announceForAccessibility(getString(R.string.announcement_settings_changed))
+        viewModel.setAutoReconnectEnabled(checked)
+      }
     }
   }
 
