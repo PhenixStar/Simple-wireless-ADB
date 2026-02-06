@@ -75,6 +75,9 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         if (status.enabled) {
           Log.d(TAG, "handleNetworkChange: Re-enabling ADB on port $port")
           AdbManager.enable(port)
+
+          // Notify service to update notification with new IP
+          AdbService.onNetworkChanged(context)
         } else {
           Log.d(TAG, "handleNetworkChange: ADB was not previously enabled, skipping auto-reconnect")
         }
