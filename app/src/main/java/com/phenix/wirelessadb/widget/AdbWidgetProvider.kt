@@ -86,6 +86,10 @@ class AdbWidgetProvider : AppWidgetProvider() {
         Log.d(TAG, "onReceive: ADB status changed - updating all widgets")
         updateAllWidgetsInstances(context)
       }
+      "android.net.conn.CONNECTIVITY_CHANGE" -> {
+        Log.d(TAG, "onReceive: Network connectivity changed - updating all widgets")
+        updateAllWidgetsInstances(context)
+      }
     }
   }
 
@@ -106,6 +110,7 @@ class AdbWidgetProvider : AppWidgetProvider() {
 
   // Broadcast receiver for real-time status updates
   private var statusChangeReceiver: BroadcastReceiver? = null
+  private var networkChangeReceiver: BroadcastReceiver? = null
 
   /**
    * Called when the first widget instance is added.
@@ -113,7 +118,7 @@ class AdbWidgetProvider : AppWidgetProvider() {
    */
   override fun onEnabled(context: Context) {
     super.onEnabled(context)
-    Log.d(TAG, "onEnabled: First widget added - registering status change receiver")
+    Log.d(TAG, "onEnabled: First widget added - registering receivers")
 
     // Register receiver for ADB status changes
     if (statusChangeReceiver == null) {
@@ -131,25 +136,51 @@ class AdbWidgetProvider : AppWidgetProvider() {
       )
       Log.d(TAG, "onEnabled: Status change receiver registered")
     }
+
+    // Register receiver for network connectivity changes
+    if (networkChangeReceiver == null) {
+      networkChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+          Log.d(TAG, "networkChangeReceiver: Network connectivity changed - updating widgets")
+          updateAllWidgetsInstances(context)
+        }
+      }
+      val networkFilter = IntentFilter().apply {
+        addAction("android.net.conn.CONNECTIVITY_CHANGE")
+      }
+      context.registerReceiver(networkChangeReceiver!!, networkFilter)
+      Log.d(TAG, "onEnabled: Network change receiver registered")
+    }
   }
 
   /**
    * Called when the last widget instance is removed.
-   * Unregisters broadcast receiver.
+   * Unregisters broadcast receivers.
    */
   override fun onDisabled(context: Context) {
     super.onDisabled(context)
-    Log.d(TAG, "onDisabled: Last widget removed - unregistering status change receiver")
+    Log.d(TAG, "onDisabled: Last widget removed - unregistering receivers")
 
-    // Unregister receiver
+    // Unregister status change receiver
     statusChangeReceiver?.let {
       try {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(it)
         Log.d(TAG, "onDisabled: Status change receiver unregistered")
       } catch (e: Exception) {
-        Log.e(TAG, "onDisabled: Failed to unregister receiver", e)
+        Log.e(TAG, "onDisabled: Failed to unregister status receiver", e)
       }
       statusChangeReceiver = null
+    }
+
+    // Unregister network change receiver
+    networkChangeReceiver?.let {
+      try {
+        context.unregisterReceiver(it)
+        Log.d(TAG, "onDisabled: Network change receiver unregistered")
+      } catch (e: Exception) {
+        Log.e(TAG, "onDisabled: Failed to unregister network receiver", e)
+      }
+      networkChangeReceiver = null
     }
   }
 
