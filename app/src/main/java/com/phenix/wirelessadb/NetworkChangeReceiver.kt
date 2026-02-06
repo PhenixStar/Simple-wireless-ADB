@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.wifi.WifiManager
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +65,27 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         return
       }
 
+      // Check trusted networks if configured
+      val trustedNetworks = PrefsManager.getTrustedNetworks(context)
+      if (trustedNetworks.isNotEmpty()) {
+        val currentSsid = getCurrentWifiSsid(context)
+        Log.d(TAG, "handleNetworkChange: Current SSID=$currentSsid, trusted networks=$trustedNetworks")
+
+        if (currentSsid == null) {
+          Log.d(TAG, "handleNetworkChange: Cannot determine current SSID, skipping auto-reconnect")
+          return
+        }
+
+        if (!PrefsManager.isTrustedNetwork(context, currentSsid)) {
+          Log.d(TAG, "handleNetworkChange: Network '$currentSsid' is not trusted, skipping auto-reconnect")
+          return
+        }
+
+        Log.d(TAG, "handleNetworkChange: Network '$currentSsid' is trusted, proceeding with auto-reconnect")
+      } else {
+        Log.d(TAG, "handleNetworkChange: No trusted networks configured, allowing all networks")
+      }
+
       val port = PrefsManager.getPort(context)
 
       // Launch coroutine to check status and re-enable if needed
@@ -82,6 +104,40 @@ class NetworkChangeReceiver : BroadcastReceiver() {
           Log.d(TAG, "handleNetworkChange: ADB was not previously enabled, skipping auto-reconnect")
         }
       }
+    }
+  }
+
+  /**
+   * Get the current WiFi SSID, removing quotes that Android adds.
+   * Returns null if not connected to WiFi or SSID cannot be determined.
+   */
+  private fun getCurrentWifiSsid(context: Context): String? {
+    return try {
+      val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+      if (wifiManager == null) {
+        Log.e(TAG, "getCurrentWifiSsid: WifiManager not available")
+        return null
+      }
+
+      val connectionInfo = wifiManager.connectionInfo
+      if (connectionInfo == null) {
+        Log.d(TAG, "getCurrentWifiSsid: No connection info")
+        return null
+      }
+
+      val ssid = connectionInfo.ssid
+      if (ssid == null || ssid == "<unknown ssid>" || ssid.isEmpty()) {
+        Log.d(TAG, "getCurrentWifiSsid: SSID unknown or empty")
+        return null
+      }
+
+      // Remove quotes that Android adds around SSID
+      val cleanSsid = ssid.trim('"')
+      Log.d(TAG, "getCurrentWifiSsid: raw='$ssid', clean='$cleanSsid'")
+      cleanSsid
+    } catch (e: Exception) {
+      Log.e(TAG, "getCurrentWifiSsid: ERROR ${e.message}")
+      null
     }
   }
 
