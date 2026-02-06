@@ -268,6 +268,7 @@
   <string name="cd_ip_address">IP address</string>
   <string name="cd_connection_command">ADB connection command</string>
   <string name="cd_status_icon">Status indicator icon</string>
+  <string name="cd_health_indicator">Connection health indicator</string>
 
   <!-- Tab content descriptions (v1.3.0) -->
   <string name="cd_tab_control">Control tab</string>

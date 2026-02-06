@@ -63,6 +63,15 @@
             android:layout_marginStart="12dp"
             android:accessibilityLiveRegion="polite" />
 
+          <ImageView
+            android:id="@+id/healthIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_health"
+            android:visibility="gone"
+            android:contentDescription="@string/cd_health_indicator" />
+
           <com.google.android.material.button.MaterialButton
             android:id="@+id/copyButton"
             style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
