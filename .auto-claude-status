@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "002-quick-settings-tile",
+  "state": "building",
+  "subtasks": {
+    "completed": 9,
+    "total": 10,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Integration Testing",
+    "id": null,
+    "total": 2
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 12,
+    "started_at": "2026-02-07T01:52:02.329153"
+  },
+  "last_update": "2026-02-07T02:19:18.722326"
+}
