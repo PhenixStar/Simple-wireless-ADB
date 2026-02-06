@@ -59,6 +59,15 @@
       </intent-filter>
     </receiver>
 
+    <receiver
+      android:name=".NetworkChangeReceiver"
+      android:enabled="true"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.net.conn.CONNECTIVITY_ACTION" />
+      </intent-filter>
+    </receiver>
+
     <!-- Shizuku Provider for non-root privileged access -->
     <provider
       android:name="rikka.shizuku.ShizukuProvider"

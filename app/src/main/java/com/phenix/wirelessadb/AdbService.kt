@@ -23,6 +23,9 @@ class AdbService : Service() {
 
   private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
   private var relayServer: AdbRelayServer? = null
+  private var currentIp: String = "Unknown"
+  private var currentPort: Int = 5555
+  private var currentRelayEnabled: Boolean = false
 
   companion object {
     private const val CHANNEL_ID = "adb_service_channel"
@@ -30,6 +33,7 @@ class AdbService : Service() {
     const val ACTION_PENDING_AUTH = "com.phenix.wirelessadb.PENDING_AUTH"
     const val ACTION_APPROVE_DEVICE = "com.phenix.wirelessadb.APPROVE_DEVICE"
     const val ACTION_DENY_DEVICE = "com.phenix.wirelessadb.DENY_DEVICE"
+    const val ACTION_NETWORK_CHANGED = "com.phenix.wirelessadb.NETWORK_CHANGED"
     const val EXTRA_CLIENT_IP = "client_ip"
 
     fun start(context: Context, ip: String, port: Int, relayEnabled: Boolean = false) {
@@ -64,6 +68,13 @@ class AdbService : Service() {
       }
       context.startService(intent)
     }
+
+    fun onNetworkChanged(context: Context) {
+      val intent = Intent(context, AdbService::class.java).apply {
+        action = ACTION_NETWORK_CHANGED
+      }
+      context.startService(intent)
+    }
   }
 
   override fun onCreate() {
@@ -87,11 +98,20 @@ class AdbService : Service() {
         }
         return START_STICKY
       }
+      ACTION_NETWORK_CHANGED -> {
+        handleNetworkChange()
+        return START_STICKY
+      }
     }
 
     val ip = intent?.getStringExtra("ip") ?: "Unknown"
     val port = intent?.getIntExtra("port", 5555) ?: 5555
     val relayEnabled = intent?.getBooleanExtra("relay_enabled", false) ?: false
+
+    // Update current state
+    currentIp = ip
+    currentPort = port
+    currentRelayEnabled = relayEnabled
 
     val tailscaleIp = TailscaleHelper.getTailscaleIp()
     startForeground(NOTIFICATION_ID, createNotification(ip, port, tailscaleIp, relayEnabled))
@@ -135,6 +155,23 @@ class AdbService : Service() {
       putExtra(EXTRA_CLIENT_IP, clientIp)
     }
     LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+  }
+
+  private fun handleNetworkChange() {
+    serviceScope.launch {
+      val status = AdbManager.getStatus(this@AdbService)
+      if (status.enabled && status.ip != null) {
+        currentIp = status.ip
+        updateNotification()
+      }
+    }
+  }
+
+  private fun updateNotification() {
+    val tailscaleIp = TailscaleHelper.getTailscaleIp()
+    val notification = createNotification(currentIp, currentPort, tailscaleIp, currentRelayEnabled)
+    val notificationManager = getSystemService(NotificationManager::class.java)
+    notificationManager.notify(NOTIFICATION_ID, notification)
   }
 
   private fun updateNotificationWithActiveConnection() {
