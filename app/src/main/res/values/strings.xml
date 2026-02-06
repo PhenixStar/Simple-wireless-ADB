@@ -34,7 +34,9 @@
 
   <!-- Status -->
   <string name="status_connected">Connected</string>
+  <string name="status_enabled">Enabled</string>
   <string name="status_disabled">Disabled</string>
+  <string name="status_error">Error</string>
   <string name="status_checking">Checking…</string>
 
   <!-- Buttons -->

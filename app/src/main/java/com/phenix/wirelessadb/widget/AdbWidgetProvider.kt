@@ -3,6 +3,7 @@ package com.phenix.wirelessadb.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import com.phenix.wirelessadb.AdbManager
@@ -10,6 +11,7 @@ import com.phenix.wirelessadb.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Home screen widget provider for ADB status display and control.
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 class AdbWidgetProvider : AppWidgetProvider() {
 
   companion object {
+    private const val TAG = "AdbWidgetProvider"
     const val ACTION_TOGGLE_ADB = "com.phenix.wirelessadb.widget.TOGGLE_ADB"
     const val ACTION_COPY_COMMAND = "com.phenix.wirelessadb.widget.COPY_COMMAND"
   }
@@ -68,6 +71,7 @@ class AdbWidgetProvider : AppWidgetProvider() {
 
   /**
    * Updates a single widget instance with current ADB status.
+   * Fetches status asynchronously and updates UI on main thread.
    */
   private fun updateWidget(
     context: Context,
@@ -75,45 +79,88 @@ class AdbWidgetProvider : AppWidgetProvider() {
     appWidgetId: Int
   ) {
     CoroutineScope(Dispatchers.IO).launch {
-      val status = AdbManager.getStatus(context)
+      try {
+        Log.d(TAG, "updateWidget: Fetching ADB status for widget $appWidgetId")
 
-      val views = RemoteViews(context.packageName, R.layout.widget_adb_status)
+        // Fetch ADB status on IO thread
+        val status = AdbManager.getStatus(context)
+        Log.d(TAG, "updateWidget: Status = enabled:${status.enabled}, ip:${status.ip}, port:${status.port}")
 
-      // Update status icon and text
-      if (status.enabled && status.ip != null) {
-        // ADB is enabled and connected
-        views.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_indicator_wifi)
-        views.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.status_active))
-        views.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_connected))
+        // Switch to main thread for UI updates
+        withContext(Dispatchers.Main) {
+          val views = RemoteViews(context.packageName, R.layout.widget_adb_status)
 
-        // Show IP:Port
-        views.setViewVisibility(R.id.widgetConnectionInfo, View.VISIBLE)
-        views.setViewVisibility(R.id.widgetPlaceholder, View.GONE)
-        views.setTextViewText(R.id.widgetIpPortText, "${status.ip}:${status.port}")
-      } else {
-        // ADB is disabled
-        views.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_indicator_wifi)
-        views.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.status_inactive))
-        views.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_disabled))
+          // Update status icon and text
+          if (status.enabled && status.ip != null) {
+            // ADB is enabled and connected
+            views.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_indicator_wifi)
+            views.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.status_active))
+            views.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_connected))
 
-        // Hide IP:Port, show placeholder
-        views.setViewVisibility(R.id.widgetConnectionInfo, View.GONE)
-        views.setViewVisibility(R.id.widgetPlaceholder, View.VISIBLE)
+            // Show IP:Port
+            views.setViewVisibility(R.id.widgetConnectionInfo, View.VISIBLE)
+            views.setViewVisibility(R.id.widgetPlaceholder, View.GONE)
+            views.setTextViewText(R.id.widgetIpPortText, "${status.ip}:${status.port}")
+
+            Log.d(TAG, "updateWidget: Widget shows connected state - ${status.ip}:${status.port}")
+          } else if (status.enabled && status.ip == null) {
+            // ADB is enabled but no WiFi connection
+            views.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_indicator_wifi)
+            views.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.warning_orange))
+            views.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_enabled))
+
+            // Show port only
+            views.setViewVisibility(R.id.widgetConnectionInfo, View.VISIBLE)
+            views.setViewVisibility(R.id.widgetPlaceholder, View.GONE)
+            views.setTextViewText(R.id.widgetIpPortText, "Port ${status.port}")
+
+            Log.d(TAG, "updateWidget: Widget shows enabled (no WiFi) state - port:${status.port}")
+          } else {
+            // ADB is disabled
+            views.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_indicator_wifi)
+            views.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.status_inactive))
+            views.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_disabled))
+
+            // Hide IP:Port, show placeholder
+            views.setViewVisibility(R.id.widgetConnectionInfo, View.GONE)
+            views.setViewVisibility(R.id.widgetPlaceholder, View.VISIBLE)
+
+            Log.d(TAG, "updateWidget: Widget shows disabled state")
+          }
+
+          // Update toggle button icon (check for enabled, close for disabled)
+          if (status.enabled) {
+            views.setImageViewResource(R.id.widgetToggleButton, R.drawable.ic_check)
+          } else {
+            views.setImageViewResource(R.id.widgetToggleButton, R.drawable.ic_close)
+          }
+
+          // TODO: Set up PendingIntents for button clicks (Phase 2)
+          // - Toggle button should trigger ACTION_TOGGLE_ADB
+          // - Copy button should trigger ACTION_COPY_COMMAND
+
+          // Update widget on main thread
+          appWidgetManager.updateAppWidget(appWidgetId, views)
+          Log.d(TAG, "updateWidget: Widget $appWidgetId updated successfully")
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "updateWidget: Failed to update widget $appWidgetId", e)
+
+        // On error, show error state on main thread
+        withContext(Dispatchers.Main) {
+          try {
+            val errorViews = RemoteViews(context.packageName, R.layout.widget_adb_status)
+            errorViews.setImageViewResource(R.id.widgetStatusIcon, R.drawable.ic_warning)
+            errorViews.setInt(R.id.widgetStatusIcon, "setColorFilter", context.getColor(R.color.error_red))
+            errorViews.setTextViewText(R.id.widgetStatusText, context.getString(R.string.status_error))
+            errorViews.setViewVisibility(R.id.widgetConnectionInfo, View.GONE)
+            errorViews.setViewVisibility(R.id.widgetPlaceholder, View.VISIBLE)
+            appWidgetManager.updateAppWidget(appWidgetId, errorViews)
+          } catch (innerE: Exception) {
+            Log.e(TAG, "updateWidget: Failed to show error state", innerE)
+          }
+        }
       }
-
-      // Update toggle button icon
-      if (status.enabled) {
-        views.setImageViewResource(R.id.widgetToggleButton, R.drawable.ic_check)
-      } else {
-        views.setImageViewResource(R.id.widgetToggleButton, R.drawable.ic_check)
-      }
-
-      // TODO: Set up PendingIntents for button clicks (Phase 2)
-      // - Toggle button should trigger ACTION_TOGGLE_ADB
-      // - Copy button should trigger ACTION_COPY_COMMAND
-
-      // Update widget
-      appWidgetManager.updateAppWidget(appWidgetId, views)
     }
   }
 }
