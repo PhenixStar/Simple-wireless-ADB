@@ -113,6 +113,13 @@ class AdbTileService : TileService() {
           // Set tile state
           state = if (status.enabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
 
+          // Set icon based on state
+          icon = if (status.enabled) {
+            Icon.createWithResource(this@AdbTileService, R.drawable.ic_tile_adb_active)
+          } else {
+            Icon.createWithResource(this@AdbTileService, R.drawable.ic_tile_adb_inactive)
+          }
+
           // Set label
           label = "Wireless ADB"
 
@@ -121,7 +128,7 @@ class AdbTileService : TileService() {
             val ip = status.ip ?: "No WiFi"
             "On - $ip:${status.port}"
           } else {
-            "Off"
+            getString(R.string.tile_subtitle_inactive)
           }
 
           // Update the tile UI
@@ -132,6 +139,7 @@ class AdbTileService : TileService() {
         // Set error state
         qsTile?.apply {
           state = Tile.STATE_INACTIVE
+          icon = Icon.createWithResource(this@AdbTileService, R.drawable.ic_tile_adb_inactive)
           label = "Wireless ADB"
           subtitle = "Error"
           updateTile()
