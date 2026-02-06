@@ -3,6 +3,7 @@ package com.phenix.wirelessadb
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,7 +28,7 @@ class AdbTileService : TileService() {
    */
   override fun onStartListening() {
     super.onStartListening()
-    // TODO: Update tile state when it becomes visible
+    updateTileState()
   }
 
   /**
@@ -45,7 +46,72 @@ class AdbTileService : TileService() {
    */
   override fun onClick() {
     super.onClick()
-    // TODO: Implement toggle logic
+    serviceScope.launch {
+      try {
+        val currentStatus = AdbManager.getStatus(applicationContext)
+        Log.d(TAG, "onClick: current enabled=${currentStatus.enabled}")
+
+        val result = if (currentStatus.enabled) {
+          AdbManager.disable()
+        } else {
+          AdbManager.enable()
+        }
+
+        result.fold(
+          onSuccess = {
+            Log.d(TAG, "onClick: toggle success")
+            updateTileState()
+          },
+          onFailure = { error ->
+            Log.e(TAG, "onClick: toggle failed - ${error.message}")
+            updateTileState()
+          }
+        )
+      } catch (e: Exception) {
+        Log.e(TAG, "onClick: error - ${e.message}")
+      }
+    }
+  }
+
+  /**
+   * Update the tile state based on current ADB status.
+   * Updates the tile's state (active/inactive), label, and subtitle.
+   */
+  private fun updateTileState() {
+    serviceScope.launch {
+      try {
+        val status = AdbManager.getStatus(applicationContext)
+        Log.d(TAG, "updateTileState: enabled=${status.enabled}, port=${status.port}, ip=${status.ip}")
+
+        qsTile?.apply {
+          // Set tile state
+          state = if (status.enabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+
+          // Set label
+          label = "Wireless ADB"
+
+          // Set subtitle with connection info
+          subtitle = if (status.enabled) {
+            val ip = status.ip ?: "No WiFi"
+            "On - $ip:${status.port}"
+          } else {
+            "Off"
+          }
+
+          // Update the tile UI
+          updateTile()
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "updateTileState: error - ${e.message}")
+        // Set error state
+        qsTile?.apply {
+          state = Tile.STATE_INACTIVE
+          label = "Wireless ADB"
+          subtitle = "Error"
+          updateTile()
+        }
+      }
+    }
   }
 
   /**
