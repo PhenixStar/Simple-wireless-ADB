@@ -153,7 +153,7 @@ class P2PConnection {
       Log.i(TAG, "STUN discovered: ${result.externalEndpoint}")
       result
     } catch (e: Exception) {
-      Log.e(TAG, "STUN failed: ${e.message}")
+      Log.e(TAG, "STUN failed: ${e.message}", e)
       _error.value = "Failed to discover external endpoint: ${e.message}"
       _state.value = ConnectionState.ERROR
       null
@@ -196,8 +196,23 @@ class P2PConnection {
 
     val localStun = stunResult!!
 
-    // Use peer's session ID for the connection
-    sessionId = peerInfo.sessionId.hexToByteArray()
+    try {
+      // Use peer's session ID for the connection
+      sessionId = peerInfo.sessionId.hexToByteArray()
+
+      // Validate session ID was parsed correctly
+      if (sessionId.isEmpty()) {
+        Log.e(TAG, "Invalid session ID format")
+        _error.value = "Invalid session ID format"
+        _state.value = ConnectionState.ERROR
+        return@withContext false
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to parse session ID: ${e.message}", e)
+      _error.value = "Invalid session ID: ${e.message}"
+      _state.value = ConnectionState.ERROR
+      return@withContext false
+    }
 
     _state.value = ConnectionState.PUNCHING
     Log.i(TAG, "Connecting to peer: ${peerInfo.externalIp}:${peerInfo.externalPort}")
@@ -223,28 +238,63 @@ class P2PConnection {
         remoteAddress = punchResult.remoteAddress
         _state.value = ConnectionState.CONNECTED
 
-        // Start keepalive
-        keepaliveJob = holePuncher.startKeepalive(
-          punchResult.socket,
-          punchResult.remoteAddress!!,
-          sessionId,
-          scope
-        )
+        try {
+          // Start keepalive
+          keepaliveJob = holePuncher.startKeepalive(
+            punchResult.socket,
+            punchResult.remoteAddress!!,
+            sessionId,
+            scope
+          )
 
-        // Start UDP tunnel for ADB traffic
-        startTunnel()
+          // Start UDP tunnel for ADB traffic
+          startTunnel()
 
-        Log.i(TAG, "P2P connected successfully!")
-        true
+          Log.i(TAG, "P2P connected successfully!")
+          true
+        } catch (e: Exception) {
+          // Clean up resources if tunnel/keepalive setup fails
+          Log.e(TAG, "Failed to start tunnel/keepalive: ${e.message}", e)
+          try {
+            keepaliveJob?.cancel()
+            keepaliveJob = null
+          } catch (ex: Exception) {
+            Log.w(TAG, "Error cancelling keepalive during cleanup: ${ex.message}", ex)
+          }
+          try {
+            punchSocket?.close()
+            punchSocket = null
+          } catch (ex: Exception) {
+            Log.w(TAG, "Error closing punch socket during cleanup: ${ex.message}", ex)
+          }
+          remoteAddress = null
+          _error.value = "Failed to start connection: ${e.message}"
+          _state.value = ConnectionState.ERROR
+          false
+        }
       } else {
         _error.value = punchResult.errorMessage ?: "Hole punch failed"
         _state.value = ConnectionState.ERROR
         false
       }
     } catch (e: Exception) {
-      Log.e(TAG, "Connection failed: ${e.message}")
-      _error.value = e.message
+      Log.e(TAG, "Connection failed: ${e.message}", e)
+      _error.value = "Connection failed: ${e.message}"
       _state.value = ConnectionState.ERROR
+      // Ensure cleanup if any resources were partially allocated
+      try {
+        keepaliveJob?.cancel()
+        keepaliveJob = null
+      } catch (ex: Exception) {
+        Log.w(TAG, "Error cancelling keepalive during error cleanup: ${ex.message}", ex)
+      }
+      try {
+        punchSocket?.close()
+        punchSocket = null
+      } catch (ex: Exception) {
+        Log.w(TAG, "Error closing punch socket during error cleanup: ${ex.message}", ex)
+      }
+      remoteAddress = null
       false
     }
   }
@@ -261,11 +311,13 @@ class P2PConnection {
     }
 
     _state.value = ConnectionState.WAITING_FOR_PEER
+    var tempSocket: DatagramSocket? = null
 
     try {
       withTimeout(timeoutMs) {
         // Keep the STUN-bound socket open and wait for incoming packets
         val socket = DatagramSocket(stunResult!!.localPort)
+        tempSocket = socket
         socket.soTimeout = 1000
 
         var connected = false
@@ -290,6 +342,7 @@ class P2PConnection {
               socket.send(DatagramPacket(ack, ack.size, packet.address, packet.port))
 
               punchSocket = socket
+              tempSocket = null // Transfer ownership, don't close in finally
               remoteAddress = InetSocketAddress(packet.address, packet.port)
               _state.value = ConnectionState.CONNECTED
               connected = true
@@ -307,13 +360,24 @@ class P2PConnection {
         connected
       }
     } catch (e: TimeoutCancellationException) {
+      Log.w(TAG, "Peer connection timed out")
       _error.value = "Peer connection timed out"
       _state.value = ConnectionState.ERROR
       false
     } catch (e: Exception) {
-      _error.value = e.message
+      Log.e(TAG, "Error waiting for peer: ${e.message}", e)
+      _error.value = "Error waiting for peer: ${e.message}"
       _state.value = ConnectionState.ERROR
       false
+    } finally {
+      // Clean up socket if connection failed
+      tempSocket?.let { socket ->
+        try {
+          socket.close()
+        } catch (e: Exception) {
+          Log.w(TAG, "Error closing temporary socket: ${e.message}", e)
+        }
+      }
     }
   }
 
@@ -322,6 +386,9 @@ class P2PConnection {
    *
    * Creates a local TCP server that accepts connections and
    * forwards data through the UDP hole-punched channel.
+   *
+   * Note: Child coroutines launched for client connections are
+   * automatically cancelled when tunnelJob is cancelled in disconnect().
    */
   private fun startTunnel() {
     tunnelJob = scope.launch {
@@ -336,20 +403,27 @@ class P2PConnection {
             val clientSocket = tunnelServer!!.accept()
             Log.d(TAG, "Tunnel client connected")
 
-            // Handle this TCP connection
+            // Handle this TCP connection (child coroutine cleaned up when parent cancelled)
             launch {
               handleTunnelClient(clientSocket)
             }
           } catch (e: IOException) {
             if (isActive) {
-              Log.w(TAG, "Tunnel accept error: ${e.message}")
+              Log.w(TAG, "Tunnel accept error: ${e.message}", e)
             }
           }
         }
       } catch (e: Exception) {
-        Log.e(TAG, "Tunnel server error: ${e.message}")
+        Log.e(TAG, "Tunnel server error: ${e.message}", e)
         _error.value = "Tunnel failed: ${e.message}"
         _state.value = ConnectionState.ERROR
+      } finally {
+        // Ensure server socket is closed when coroutine completes
+        try {
+          tunnelServer?.close()
+        } catch (e: Exception) {
+          Log.w(TAG, "Error closing tunnel server in finally: ${e.message}", e)
+        }
       }
     }
   }
@@ -361,12 +435,15 @@ class P2PConnection {
     val udpSocket = punchSocket ?: return@withContext
     val remote = remoteAddress ?: return@withContext
 
+    var readJob: Job? = null
+    var writeJob: Job? = null
+
     try {
       val tcpInput = tcpSocket.getInputStream()
       val tcpOutput = tcpSocket.getOutputStream()
 
       // Read from TCP, send over UDP
-      val readJob = launch {
+      readJob = launch {
         val buffer = ByteArray(MAX_UDP_PAYLOAD)
         while (isActive && tcpSocket.isConnected) {
           val bytesRead = tcpInput.read(buffer)
@@ -379,7 +456,7 @@ class P2PConnection {
       }
 
       // Read from UDP, write to TCP
-      val writeJob = launch {
+      writeJob = launch {
         val buffer = ByteArray(MAX_UDP_PAYLOAD + 100)
         while (isActive && tcpSocket.isConnected) {
           try {
@@ -402,9 +479,22 @@ class P2PConnection {
       readJob.join()
       writeJob.cancel()
     } catch (e: Exception) {
-      Log.w(TAG, "Tunnel client error: ${e.message}")
+      Log.w(TAG, "Tunnel client error: ${e.message}", e)
     } finally {
-      tcpSocket.close()
+      // Ensure both jobs are cancelled
+      try {
+        readJob?.cancel()
+        writeJob?.cancel()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error cancelling tunnel jobs: ${e.message}", e)
+      }
+
+      // Close socket and streams
+      try {
+        tcpSocket.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing tunnel client socket: ${e.message}", e)
+      }
     }
   }
 
@@ -431,27 +521,61 @@ class P2PConnection {
   fun disconnect() {
     Log.i(TAG, "Disconnecting P2P connection")
 
-    keepaliveJob?.cancel()
-    tunnelJob?.cancel()
+    try {
+      // Cancel coroutines first to stop new activity
+      try {
+        keepaliveJob?.cancel()
+        keepaliveJob = null
+      } catch (e: Exception) {
+        Log.w(TAG, "Error cancelling keepalive job: ${e.message}", e)
+      }
 
-    tunnelServer?.close()
-    punchSocket?.close()
+      try {
+        tunnelJob?.cancel()
+        tunnelJob = null
+      } catch (e: Exception) {
+        Log.w(TAG, "Error cancelling tunnel job: ${e.message}", e)
+      }
 
-    tunnelServer = null
-    punchSocket = null
-    remoteAddress = null
-    stunResult = null
+      // Close network resources
+      try {
+        tunnelServer?.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing tunnel server: ${e.message}", e)
+      }
 
-    _state.value = ConnectionState.DISCONNECTED
-    _bytesTransferred.value = 0
+      try {
+        punchSocket?.close()
+      } catch (e: Exception) {
+        Log.w(TAG, "Error closing punch socket: ${e.message}", e)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "Error during disconnect: ${e.message}", e)
+    } finally {
+      // Always reset state, even if cleanup fails
+      tunnelServer = null
+      punchSocket = null
+      remoteAddress = null
+      stunResult = null
+
+      _state.value = ConnectionState.DISCONNECTED
+      _bytesTransferred.value = 0
+    }
   }
 
   /**
    * Clean up when done.
+   * Cancels all coroutines first, then closes network resources.
    */
   fun destroy() {
-    disconnect()
-    scope.cancel()
+    try {
+      // Cancel scope first to stop all child coroutines
+      scope.cancel()
+      // Then clean up network resources
+      disconnect()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error during destroy: ${e.message}", e)
+    }
   }
 
   // Utility extensions
@@ -460,14 +584,19 @@ class P2PConnection {
   }
 
   private fun String.hexToByteArray(): ByteArray {
-    val len = length
-    val data = ByteArray(len / 2)
-    var i = 0
-    while (i < len) {
-      data[i / 2] = ((Character.digit(this[i], 16) shl 4) +
-        Character.digit(this[i + 1], 16)).toByte()
-      i += 2
+    return try {
+      val len = length
+      val data = ByteArray(len / 2)
+      var i = 0
+      while (i < len) {
+        data[i / 2] = ((Character.digit(this[i], 16) shl 4) +
+          Character.digit(this[i + 1], 16)).toByte()
+        i += 2
+      }
+      data
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to parse hex string: ${e.message}", e)
+      ByteArray(0)
     }
-    return data
   }
 }

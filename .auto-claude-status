@@ -1,15 +1,15 @@
 {
   "active": true,
-  "spec": "007-auto-reconnect-on-network-change",
+  "spec": "001-improve-code-quality-based-on-analysis",
   "state": "building",
   "subtasks": {
-    "completed": 5,
-    "total": 8,
-    "in_progress": 1,
+    "completed": 11,
+    "total": 20,
+    "in_progress": 0,
     "failed": 0
   },
   "phase": {
-    "current": "Trusted Networks (Optional)",
+    "current": "Dependency Update - JSch",
     "id": null,
     "total": 2
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 7,
-    "started_at": "2026-02-07T04:33:05.351503"
+    "number": 9,
+    "started_at": "2026-02-05T13:28:18.356172"
   },
-  "last_update": "2026-02-07T05:13:04.677678"
+  "last_update": "2026-02-05T14:07:07.637286"
 }
