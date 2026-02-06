@@ -1,6 +1,8 @@
 package com.phenix.wirelessadb.health
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -59,6 +61,8 @@ object ConnectionHealthManager {
   private var lastKnownEnabled = false
   private var lastKnownPort = 0
   private var lastKnownIp: String? = null
+  private var lastNotificationTime = 0L
+  private const val NOTIFICATION_COOLDOWN_MS = 5 * 60 * 1000L // 5 minutes
 
   /**
    * Start health monitoring with the specified check interval.
@@ -220,6 +224,15 @@ object ConnectionHealthManager {
           }
 
           Log.d(TAG, "Health state updated: $newState (degradation=$degradationDetected)")
+
+          // Trigger notification on degradation (only on state change)
+          val previousState = _healthState.value
+          if ((newState == HealthState.DEGRADED || newState == HealthState.FAILED) &&
+              previousState != newState &&
+              shouldShowNotification()) {
+            triggerHealthNotification(context, newState, degradationDetected)
+          }
+
           _healthState.postValue(newState)
 
           // Update last known state if healthy
@@ -242,5 +255,58 @@ object ConnectionHealthManager {
    */
   fun getCurrentHealthState(): HealthState {
     return _healthState.value ?: HealthState.UNKNOWN
+  }
+
+  /**
+   * Check if notification should be shown based on cooldown period.
+   *
+   * Prevents notification spam by enforcing a 5-minute cooldown between notifications.
+   *
+   * @return true if notification should be shown, false otherwise
+   */
+  private fun shouldShowNotification(): Boolean {
+    val now = System.currentTimeMillis()
+    return if (now - lastNotificationTime > NOTIFICATION_COOLDOWN_MS) {
+      lastNotificationTime = now
+      true
+    } else {
+      Log.d(TAG, "Notification suppressed - cooldown active")
+      false
+    }
+  }
+
+  /**
+   * Trigger health degradation notification.
+   *
+   * Sends intent to AdbService to display a notification about connection health issues.
+   *
+   * @param context Application context
+   * @param healthState Current health state (DEGRADED or FAILED)
+   * @param degradationDetected Whether degradation was detected
+   */
+  private fun triggerHealthNotification(
+    context: Context,
+    healthState: HealthState,
+    degradationDetected: Boolean
+  ) {
+    try {
+      Log.d(TAG, "Triggering health notification: $healthState (degradation=$degradationDetected)")
+
+      // Send intent to AdbService
+      val intent = Intent(context, com.phenix.wirelessadb.AdbService::class.java).apply {
+        action = "com.phenix.wirelessadb.HEALTH_DEGRADATION"
+        putExtra("health_status", healthState.name)
+        putExtra("degradation_detected", degradationDetected)
+      }
+
+      // Start service to show notification
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+      } else {
+        context.startService(intent)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to trigger health notification: ${e.message}", e)
+    }
   }
 }

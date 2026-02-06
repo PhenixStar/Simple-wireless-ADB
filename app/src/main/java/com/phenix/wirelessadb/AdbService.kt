@@ -75,6 +75,19 @@ class AdbService : Service() {
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
+      "com.phenix.wirelessadb.HEALTH_DEGRADATION" -> {
+        val healthStatus = intent.getStringExtra("health_status") ?: "UNKNOWN"
+        val degradationDetected = intent.getBooleanExtra("degradation_detected", false)
+
+        val details = when {
+          healthStatus == "FAILED" -> "ADB connection is disabled or unreachable"
+          healthStatus == "DEGRADED" -> "ADB connection has changed (IP/port/network)"
+          else -> "Connection health issue detected"
+        }
+
+        showHealthDegradationAlert(healthStatus, details)
+        return START_NOT_STICKY
+      }
       ACTION_APPROVE_DEVICE -> {
         val clientIp = intent.getStringExtra(EXTRA_CLIENT_IP)
         if (clientIp != null) {
