@@ -231,13 +231,17 @@
   <string name="scanner_title">Scan QR Code</string>
   <string name="scanner_instructions">Point your camera at a QR code to scan the pairing information</string>
   <string name="scanner_permission_required">Camera permission required to scan QR codes</string>
+  <string name="scanner_permission_denied">Camera permission denied. Please enable it in Settings.</string>
   <string name="scanner_grant_permission">Grant Permission</string>
   <string name="scanner_error">Failed to scan QR code</string>
+  <string name="scanner_error_invalid_qr">Invalid QR code format</string>
   <string name="scanner_invalid_code">Invalid QR code format</string>
   <string name="scanner_success">QR code scanned successfully</string>
   <string name="scanner_processing">Processing QR code…</string>
   <string name="scanner_scanning">Scanning…</string>
   <string name="btn_scan_qr">Scan QR Code</string>
+  <string name="pairing_scan_qr_button">Scan QR Code</string>
+  <string name="pairing_or_scan">or scan QR code:</string>
   <string name="scanner_cancel">Cancel</string>
 
   <!-- Common Actions -->
