@@ -11,8 +11,10 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.phenix.wirelessadb.model.ConnectionMode
 import com.phenix.wirelessadb.relay.AdbRelayServer
 import com.phenix.wirelessadb.relay.TailscaleHelper
+import com.phenix.wirelessadb.statistics.StatisticsManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,6 +25,7 @@ class AdbService : Service() {
 
   private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
   private var relayServer: AdbRelayServer? = null
+  private var serviceStartTime: Long = 0L
 
   companion object {
     private const val CHANNEL_ID = "adb_service_channel"
@@ -69,6 +72,7 @@ class AdbService : Service() {
   override fun onCreate() {
     super.onCreate()
     createNotificationChannel()
+    serviceStartTime = System.currentTimeMillis()
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -114,9 +118,13 @@ class AdbService : Service() {
         broadcastPendingAuth(clientIp)
       },
       onConnectionEstablished = { _ ->
+        // Track connection in statistics
+        StatisticsManager.recordConnection(this, ConnectionMode.TAILSCALE_RELAY)
         updateNotificationWithActiveConnection()
       },
       onConnectionClosed = { _ ->
+        // Complete connection tracking
+        StatisticsManager.completeConnection(this, successful = true)
         updateNotificationWithActiveConnection()
       }
     )
@@ -142,6 +150,13 @@ class AdbService : Service() {
   }
 
   override fun onDestroy() {
+    // Track uptime before stopping service
+    if (serviceStartTime > 0) {
+      val uptime = System.currentTimeMillis() - serviceStartTime
+      StatisticsManager.updateUptime(this, uptime)
+      StatisticsManager.calculateReliabilityScore(this)
+    }
+
     relayServer?.stop()
     relayServer = null
     serviceScope.cancel()
