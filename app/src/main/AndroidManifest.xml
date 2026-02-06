@@ -59,6 +59,18 @@
       </intent-filter>
     </receiver>
 
+    <!-- Home Screen Widget -->
+    <receiver
+      android:name=".widget.AdbWidgetProvider"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/adb_widget_info" />
+    </receiver>
+
     <receiver
       android:name=".NetworkChangeReceiver"
       android:enabled="true"

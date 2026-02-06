@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WIDGET METADATA: ADB Status Widget (v1.3.0)
+  ===========================================
+  AppWidget configuration for home screen widget
+
+  Dimensions: 2x1 cells (110dp x 40dp minimum)
+  Update: Manual only (updatePeriodMillis = 0)
+  Resize: Horizontal and Vertical
+-->
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:minWidth="110dp"
+  android:minHeight="40dp"
+  android:targetCellWidth="2"
+  android:targetCellHeight="1"
+  android:maxResizeWidth="400dp"
+  android:maxResizeHeight="120dp"
+  android:updatePeriodMillis="0"
+  android:initialLayout="@layout/widget_adb_status"
+  android:resizeMode="horizontal|vertical"
+  android:widgetCategory="home_screen"
+  android:previewImage="@drawable/ic_indicator_wifi"
+  android:previewLayout="@layout/widget_adb_status"
+  android:description="@string/widget_description"
+  android:initialKeyguardLayout="@layout/widget_adb_status" />

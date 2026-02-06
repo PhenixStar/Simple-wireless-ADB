@@ -1,15 +1,15 @@
 {
   "active": true,
-  "spec": "001-improve-code-quality-based-on-analysis",
+  "spec": "003-home-screen-widget",
   "state": "building",
   "subtasks": {
     "completed": 11,
-    "total": 20,
-    "in_progress": 0,
+    "total": 12,
+    "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Dependency Update - JSch",
+    "current": "Integration & Testing",
     "id": null,
     "total": 2
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 9,
-    "started_at": "2026-02-05T13:28:18.356172"
+    "number": 13,
+    "started_at": "2026-02-07T01:52:14.093243"
   },
-  "last_update": "2026-02-05T14:07:07.637286"
+  "last_update": "2026-02-07T02:38:46.645178"
 }
