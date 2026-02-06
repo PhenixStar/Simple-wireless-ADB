@@ -1,8 +1,11 @@
 package com.phenix.wirelessadb.widget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
@@ -28,6 +31,25 @@ class AdbWidgetProvider : AppWidgetProvider() {
     private const val TAG = "AdbWidgetProvider"
     const val ACTION_TOGGLE_ADB = "com.phenix.wirelessadb.widget.TOGGLE_ADB"
     const val ACTION_COPY_COMMAND = "com.phenix.wirelessadb.widget.COPY_COMMAND"
+  }
+
+  /**
+   * Called when widget receives a broadcast.
+   * Handles custom actions like toggle and copy.
+   */
+  override fun onReceive(context: Context, intent: Intent) {
+    super.onReceive(context, intent)
+
+    when (intent.action) {
+      ACTION_TOGGLE_ADB -> {
+        Log.d(TAG, "onReceive: Toggle ADB action received")
+        handleToggleAdb(context)
+      }
+      ACTION_COPY_COMMAND -> {
+        Log.d(TAG, "onReceive: Copy command action received")
+        // TODO: Implement copy to clipboard (next subtask)
+      }
+    }
   }
 
   /**
@@ -67,6 +89,48 @@ class AdbWidgetProvider : AppWidgetProvider() {
   override fun onDeleted(context: Context, appWidgetIds: IntArray) {
     super.onDeleted(context, appWidgetIds)
     // Widget instance removed - cleanup if needed
+  }
+
+  /**
+   * Handles toggle ADB button click.
+   * Fetches current status, toggles ADB state, and updates all widgets.
+   */
+  private fun handleToggleAdb(context: Context) {
+    CoroutineScope(Dispatchers.IO).launch {
+      try {
+        // Get current status
+        val status = AdbManager.getStatus(context)
+        Log.d(TAG, "handleToggleAdb: Current status = enabled:${status.enabled}")
+
+        // Toggle ADB state
+        val result = if (status.enabled) {
+          Log.d(TAG, "handleToggleAdb: Disabling ADB")
+          AdbManager.disable()
+        } else {
+          Log.d(TAG, "handleToggleAdb: Enabling ADB on port ${status.port}")
+          AdbManager.enable(status.port)
+        }
+
+        // Check result
+        if (result.isSuccess) {
+          Log.d(TAG, "handleToggleAdb: Toggle successful")
+        } else {
+          Log.e(TAG, "handleToggleAdb: Toggle failed - ${result.exceptionOrNull()?.message}")
+        }
+
+        // Update all widgets to reflect new state
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val componentName = ComponentName(context, AdbWidgetProvider::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+
+        Log.d(TAG, "handleToggleAdb: Updating ${appWidgetIds.size} widget(s)")
+        for (appWidgetId in appWidgetIds) {
+          updateWidget(context, appWidgetManager, appWidgetId)
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "handleToggleAdb: Failed to toggle ADB", e)
+      }
+    }
   }
 
   /**
@@ -135,9 +199,19 @@ class AdbWidgetProvider : AppWidgetProvider() {
             views.setImageViewResource(R.id.widgetToggleButton, R.drawable.ic_close)
           }
 
-          // TODO: Set up PendingIntents for button clicks (Phase 2)
-          // - Toggle button should trigger ACTION_TOGGLE_ADB
-          // - Copy button should trigger ACTION_COPY_COMMAND
+          // Set up PendingIntent for toggle button
+          val toggleIntent = Intent(context, AdbWidgetProvider::class.java).apply {
+            action = ACTION_TOGGLE_ADB
+          }
+          val togglePendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            toggleIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+          )
+          views.setOnClickPendingIntent(R.id.widgetToggleButton, togglePendingIntent)
+
+          // TODO: Set up PendingIntent for copy button (next subtask)
 
           // Update widget on main thread
           appWidgetManager.updateAppWidget(appWidgetId, views)
