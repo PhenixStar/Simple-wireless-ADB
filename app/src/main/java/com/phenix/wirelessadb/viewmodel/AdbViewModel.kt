@@ -160,6 +160,15 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
 
       result.onSuccess {
         refreshStatus()
+
+        // Start/stop health monitoring based on new ADB state
+        if (!isEnabled && isAutoReconnectEnabled()) {
+          // ADB was just enabled and auto-reconnect is on
+          startHealthMonitoring()
+        } else if (isEnabled) {
+          // ADB was just disabled
+          stopHealthMonitoring()
+        }
       }.onFailure { e ->
         _error.value = e.message
       }
