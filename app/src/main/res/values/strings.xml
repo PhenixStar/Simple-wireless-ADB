@@ -328,4 +328,9 @@
   <string name="devices_added_date">Added: %1$s</string>
   <string name="devices_requested_now">Requested: Now</string>
   <string name="devices_remove">Remove device</string>
+
+  <!-- Quick Settings Tile (v1.3.0+) -->
+  <string name="tile_label">Wireless ADB</string>
+  <string name="tile_subtitle_active">Active on port %1$d</string>
+  <string name="tile_subtitle_inactive">Tap to enable</string>
 </resources>
