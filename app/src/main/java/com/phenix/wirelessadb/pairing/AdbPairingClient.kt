@@ -113,12 +113,13 @@ class AdbPairingClient(
    * Connect to ADB pairing service and establish TLS.
    */
   private fun connect(): Boolean {
+    var plainSocket: Socket? = null
     try {
       Log.d(TAG, "Connecting to $host:$port")
 
       // Create plain socket
-      val socket = Socket(host, port)
-      socket.tcpNoDelay = true
+      plainSocket = Socket(host, port)
+      plainSocket.tcpNoDelay = true
 
       // Initialize Conscrypt for TLS 1.3
       val sslContext = SSLContext.getInstance("TLSv1.3", Conscrypt.newProvider())
@@ -127,10 +128,10 @@ class AdbPairingClient(
       // Upgrade to TLS
       val factory = sslContext.socketFactory
       sslSocket = factory.createSocket(
-        socket,
+        plainSocket,
         host,
         port,
-        true
+        true // autoClose = true means plainSocket will be closed when sslSocket closes
       ) as SSLSocket
 
       sslSocket?.apply {
@@ -147,6 +148,15 @@ class AdbPairingClient(
     } catch (e: Exception) {
       errorMessage = "Connection failed: ${e.message}"
       Log.e(TAG, errorMessage!!, e)
+      // If SSL socket creation failed, close the plain socket
+      // (if sslSocket was successfully created, it will handle closing plainSocket due to autoClose=true)
+      if (sslSocket == null) {
+        try {
+          plainSocket?.close()
+        } catch (closeException: Exception) {
+          Log.e(TAG, "Error closing plain socket during cleanup", closeException)
+        }
+      }
       return false
     }
   }
@@ -164,7 +174,7 @@ class AdbPairingClient(
         KEYING_MATERIAL_LENGTH
       )
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to export keying material: ${e.message}")
+      Log.e(TAG, "Failed to export keying material", e)
       null
     }
   }
@@ -321,22 +331,36 @@ class AdbPairingClient(
       Log.d(TAG, "Received message type=$type, size=$size")
       return Pair(type, payload)
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to receive message: ${e.message}")
+      Log.e(TAG, "Failed to receive message", e)
       return null
     }
   }
 
   /**
    * Disconnect from the pairing service.
+   * Each resource is closed independently to ensure all cleanup happens even if one fails.
    */
   private fun disconnect() {
+    // Close each resource independently to prevent one failure from blocking others
     try {
       dataIn?.close()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error closing input stream", e)
+    }
+
+    try {
       dataOut?.close()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error closing output stream", e)
+    }
+
+    try {
       sslSocket?.close()
     } catch (e: Exception) {
-      Log.w(TAG, "Error during disconnect: ${e.message}")
+      Log.e(TAG, "Error closing SSL socket", e)
     }
+
+    // Clear references
     dataIn = null
     dataOut = null
     sslSocket = null

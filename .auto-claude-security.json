@@ -128,15 +128,37 @@
     "zsh"
   ],
   "stack_commands": [
+    "ant",
     "gradle",
     "gradlew",
+    "ipython",
+    "jar",
+    "java",
+    "javac",
+    "jupyter",
     "kotlin",
-    "kotlinc"
+    "kotlinc",
+    "maven",
+    "mvn",
+    "node",
+    "notebook",
+    "npm",
+    "npx",
+    "pdb",
+    "pip",
+    "pip3",
+    "pipx",
+    "pudb",
+    "python",
+    "python3"
   ],
   "script_commands": [],
   "custom_commands": [],
   "detected_stack": {
     "languages": [
+      "python",
+      "javascript",
+      "java",
       "kotlin"
     ],
     "package_managers": [
@@ -156,7 +178,8 @@
     "cargo_aliases": [],
     "shell_scripts": []
   },
-  "project_dir": "D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor",
-  "created_at": "2026-02-07T02:58:57.659663",
-  "project_hash": "e16dedeca885a75056448cf91f33beba"
+  "project_dir": "D:\\AI\\Android\\APK\\Android-Apps\u0007pps\\wirelessadb\\.auto-claude\\worktrees\tasks\u0005-connection-health-monitor",
+  "created_at": "2026-02-05T12:56:49.824459",
+  "project_hash": "0d6be561318e22002fe7a184fb411324",
+  "inherited_from": "D:\\AI\\Android\\APK\\Android-Apps\u0007pps\\wirelessadb"
 }

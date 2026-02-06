@@ -1,0 +1,530 @@
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:compileDebugAidl UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:dataBindingMergeDependencyArtifactsDebug UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:dataBindingGenBaseClassesDebug UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :app:buildKotlinToolingMetadata UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:compileReleaseAidl UP-TO-DATE
+> Task :app:dataBindingMergeDependencyArtifactsRelease UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :app:mergeReleaseResources UP-TO-DATE
+> Task :app:packageReleaseResources UP-TO-DATE
+> Task :app:processReleaseNavigationResources UP-TO-DATE
+> Task :app:parseReleaseLocalResources UP-TO-DATE
+> Task :app:dataBindingGenBaseClassesRelease UP-TO-DATE
+> Task :app:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:checkReleaseAarMetadata UP-TO-DATE
+> Task :app:compileReleaseNavigationResources UP-TO-DATE
+> Task :app:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :app:processReleaseMainManifest UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:processReleaseManifestForPackage UP-TO-DATE
+> Task :app:processReleaseResources UP-TO-DATE
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :app:preReleaseUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileReleaseUnitTest UP-TO-DATE
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+
+> Task :app:compileDebugUnitTestKotlin
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/test/java/com/phenix/wirelessadb/relay/AdbRelayServerTest.kt:297:9 Variable 'pendingAuthCalled' is assigned but never accessed
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/test/java/com/phenix/wirelessadb/relay/AdbRelayServerTest.kt:298:9 Variable 'connectionEstablishedCalled' is assigned but never accessed
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/test/java/com/phenix/wirelessadb/relay/AdbRelayServerTest.kt:299:9 Variable 'connectionClosedCalled' is assigned but never accessed
+
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+
+> Task :app:testDebugUnitTest
+
+AdbServiceTest > EXTRA_CLIENT_IP has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_APPROVE_DEVICE has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with relay_enabled extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_DENY_DEVICE has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > denyDevice creates intent with correct action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice includes client IP in intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice creates intent with correct action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_PENDING_AUTH has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with correct ip extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > stop creates correct stop service intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start intent has correct component FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice intent has correct component FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > denyDevice includes client IP in intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start defaults relay_enabled to false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with correct port extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive queries preferences with correct context FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive responds to QUICKBOOT_POWERON FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive ignores non-boot actions FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive does not enable ADB when enable_on_boot is false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive uses port from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive handles intent with null action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive continues even if AdbManager fails FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive responds to ACTION_BOOT_COMPLETED FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive handles multiple boot events gracefully FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve device without name works FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > deny non-existent pending connection does not crash FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > no pending approval initially FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > deny device removes pending connection FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server not running initially FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > get trusted devices returns list FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > callbacks can be null FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server stops successfully FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > callbacks can be provided FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > custom relay port is used FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > remove trusted device decreases count FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > custom adb port is used FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > default ports work correctly FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > remove non-existent trusted device does not crash FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > multiple start-stop cycles work correctly FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > default adb port is 5555 FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > initial trusted device count is zero FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > stop closes selectorManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server warns when already running FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > failed start cleans up resources FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server stop is idempotent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > stop clears pending connections FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > default relay port is 5556 FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server starts successfully FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve same device twice updates existing entry FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve device increases trusted count FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand returns local wifi command FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand returns empty when disabled FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > disconnectWarpgate updates state FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand uses tailscale when available FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial error state is null FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionMode returns current mode FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getWarpgateConfig returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand falls back to local when tailscale unavailable FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setPendingApproval updates LiveData FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getPort returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial trusted device count is zero FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setWarpgateConfig saves to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setConnectionMode updates LiveData and saves to prefs FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > isRelayEnabled returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setEnableOnBoot delegates to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial loading state is false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial connection mode is loaded from preferences FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getRelayPort returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > clearError sets error to null FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > isEnableOnBoot returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setRelayEnabled delegates to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+> Task :app:compileReleaseKotlin
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/AdbManager.kt:133:28 'getter for allNetworks: Array<(out) Network!>' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/AdbService.kt:14:47 'LocalBroadcastManager' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/AdbService.kt:139:5 'LocalBroadcastManager' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/MainActivity.kt:16:47 'LocalBroadcastManager' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/MainActivity.kt:63:5 'LocalBroadcastManager' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/MainActivity.kt:77:5 'LocalBroadcastManager' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/HolePuncher.kt:232:11 Variable 'bestResult' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/LocalDiscovery.kt:265:83 'getter for host: InetAddress!' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/LocalDiscovery.kt:280:18 'resolveService(NsdServiceInfo!, NsdManager.ResolveListener!): Unit' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/LocalDiscovery.kt:290:22 'getter for host: InetAddress!' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/StunClient.kt:311:57 Parameter 'length' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/p2p/StunClient.kt:339:54 Parameter 'length' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/pairing/AdbPairingClient.kt:266:59 Parameter 'keyingMaterial' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/pairing/AdbPairingClient.kt:309:11 Variable 'version' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/relay/ConnectionProxy.kt:49:5 Parameter 'tag' is never used
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/relay/TailscaleHelper.kt:85:48 There is more than one label with such a name in this scope
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/util/AccessibilityHelper.kt:26:12 Extension is shadowed by a member: public open fun announceForAccessibility(p0: CharSequence!): Unit
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/util/AccessibilityHelper.kt:27:36 'obtain(): AccessibilityEvent!' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/util/AccessibilityHelper.kt:33:11 'recycle(): Unit' is deprecated. Deprecated in Java
+w: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/src/main/java/com/phenix/wirelessadb/util/MotionExtensions.kt:252:46 'TRANSITION_ANIMATION_SCALE: String' is deprecated. Deprecated in Java
+
+> Task :app:testDebugUnitTest
+
+358 tests completed, 71 failed
+
+> Task :app:testDebugUnitTest FAILED
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:processReleaseJavaRes
+> Task :app:bundleReleaseClassesToRuntimeJar
+> Task :app:bundleReleaseClassesToCompileJar
+> Task :app:compileReleaseUnitTestKotlin
+> Task :app:compileReleaseUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processReleaseUnitTestJavaRes
+
+> Task :app:testReleaseUnitTest
+
+AdbServiceTest > EXTRA_CLIENT_IP has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_APPROVE_DEVICE has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with relay_enabled extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_DENY_DEVICE has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > denyDevice creates intent with correct action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice includes client IP in intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice creates intent with correct action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > ACTION_PENDING_AUTH has correct value FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with correct ip extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > stop creates correct stop service intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start intent has correct component FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > approveDevice intent has correct component FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > denyDevice includes client IP in intent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start defaults relay_enabled to false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbServiceTest > start creates intent with correct port extra FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive queries preferences with correct context FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive responds to QUICKBOOT_POWERON FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive ignores non-boot actions FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive does not enable ADB when enable_on_boot is false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive uses port from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive handles intent with null action FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive continues even if AdbManager fails FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive responds to ACTION_BOOT_COMPLETED FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+BootReceiverTest > onReceive handles multiple boot events gracefully FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve device without name works FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > deny non-existent pending connection does not crash FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > no pending approval initially FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > deny device removes pending connection FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server not running initially FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > get trusted devices returns list FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > stop method cleans up all resources FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > remove trusted device decreases count FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > remove non-existent trusted device does not crash FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > default adb port is 5555 FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > initial trusted device count is zero FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > server stop is idempotent FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > stop clears pending connections FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > default relay port is 5556 FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > resource cleanup patterns are verified FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve same device twice updates existing entry FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbRelayServerTest > approve device increases trusted count FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand returns local wifi command FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand returns empty when disabled FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > disconnectWarpgate updates state FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand uses tailscale when available FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial error state is null FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionMode returns current mode FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getWarpgateConfig returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getConnectionCommand falls back to local when tailscale unavailable FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setPendingApproval updates LiveData FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getPort returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial trusted device count is zero FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setWarpgateConfig saves to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setConnectionMode updates LiveData and saves to prefs FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > isRelayEnabled returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setEnableOnBoot delegates to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial loading state is false FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > initial connection mode is loaded from preferences FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > getRelayPort returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > clearError sets error to null FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > isEnableOnBoot returns value from PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+AdbViewModelTest > setRelayEnabled delegates to PrefsManager FAILED
+    java.lang.UnsatisfiedLinkError at null:-1
+
+349 tests completed, 62 failed
+
+> Task :app:testReleaseUnitTest FAILED
+w: Detected multiple Kotlin daemon sessions at kotlin\sessions
+
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:testDebugUnitTest'.
+> There were failing tests. See the report at: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/build/reports/tests/testDebugUnitTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:testReleaseUnitTest'.
+> There were failing tests. See the report at: file:///D:/AI/Android/APK/Android-Apps/apps/wirelessadb/.auto-claude/worktrees/tasks/001-improve-code-quality-based-on-analysis/app/build/reports/tests/testReleaseUnitTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+==============================================================================
+
+BUILD FAILED in 30s
+60 actionable tasks: 14 executed, 46 up-to-date

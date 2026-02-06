@@ -8,6 +8,7 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.CAMERA" />
 
   <application
     android:allowBackup="true"
@@ -37,6 +38,17 @@
         android:value="adb_management" />
     </service>
 
+    <service
+      android:name=".AdbTileService"
+      android:exported="true"
+      android:icon="@drawable/ic_tile_adb_inactive"
+      android:label="@string/tile_label"
+      android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+      <intent-filter>
+        <action android:name="android.service.quicksettings.action.QS_TILE" />
+      </intent-filter>
+    </service>
+
     <receiver
       android:name=".BootReceiver"
       android:enabled="true"
@@ -44,6 +56,27 @@
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
         <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+      </intent-filter>
+    </receiver>
+
+    <!-- Home Screen Widget -->
+    <receiver
+      android:name=".widget.AdbWidgetProvider"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/adb_widget_info" />
+    </receiver>
+
+    <receiver
+      android:name=".NetworkChangeReceiver"
+      android:enabled="true"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.net.conn.CONNECTIVITY_ACTION" />
       </intent-filter>
     </receiver>
 

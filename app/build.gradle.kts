@@ -113,8 +113,8 @@ dependencies {
   // WorkManager for background tasks
   implementation("androidx.work:work-runtime-ktx:2.9.0")
 
-  // JSch for SSH tunneling (Warpgate)
-  implementation("com.jcraft:jsch:0.1.55")
+  // JSch for SSH tunneling (Warpgate) - Updated to maintained fork
+  implementation("com.github.mwiede:jsch:2.27.7")
 
   // Shizuku for non-root privileged access
   implementation("dev.rikka.shizuku:api:13.1.5")
@@ -125,6 +125,9 @@ dependencies {
 
   // ZXing for QR code generation
   implementation("com.google.zxing:core:3.5.2")
+
+  // ZXing Android Embedded for QR code scanning
+  implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
   // Testing
   testImplementation("junit:junit:4.13.2")
