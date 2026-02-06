@@ -43,6 +43,9 @@ object PrefsManager {
   private const val DEFAULT_AUTO_RECONNECT_DELAY = 5000 // 5 seconds
   private const val DEFAULT_AUTO_RECONNECT_MAX_RETRIES = 3
 
+  // Trusted networks settings
+  private const val KEY_TRUSTED_NETWORKS = "trusted_networks"
+
   private fun getPrefs(context: Context): SharedPreferences {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
   }
@@ -180,5 +183,30 @@ object PrefsManager {
 
   fun setAutoReconnectMaxRetries(context: Context, retries: Int) {
     getPrefs(context).edit().putInt(KEY_AUTO_RECONNECT_MAX_RETRIES, retries).apply()
+  }
+
+  // Trusted Networks
+  fun getTrustedNetworks(context: Context): Set<String> {
+    return getPrefs(context).getStringSet(KEY_TRUSTED_NETWORKS, emptySet()) ?: emptySet()
+  }
+
+  fun setTrustedNetworks(context: Context, networks: Set<String>) {
+    getPrefs(context).edit().putStringSet(KEY_TRUSTED_NETWORKS, networks).apply()
+  }
+
+  fun addTrustedNetwork(context: Context, ssid: String) {
+    val networks = getTrustedNetworks(context).toMutableSet()
+    networks.add(ssid)
+    setTrustedNetworks(context, networks)
+  }
+
+  fun removeTrustedNetwork(context: Context, ssid: String) {
+    val networks = getTrustedNetworks(context).toMutableSet()
+    networks.remove(ssid)
+    setTrustedNetworks(context, networks)
+  }
+
+  fun isTrustedNetwork(context: Context, ssid: String): Boolean {
+    return getTrustedNetworks(context).contains(ssid)
   }
 }
