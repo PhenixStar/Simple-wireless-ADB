@@ -1,0 +1,56 @@
+{
+  "files_to_modify": {
+    "android-app": [
+      "app/build.gradle.kts",
+      "app/src/main/AndroidManifest.xml",
+      "app/src/main/java/com/phenix/wirelessadb/PrefsManager.kt",
+      "app/src/main/java/com/phenix/wirelessadb/AdbService.kt",
+      "app/src/main/java/com/phenix/wirelessadb/viewmodel/AdbViewModel.kt",
+      "app/src/main/java/com/phenix/wirelessadb/ui/ControlFragment.kt"
+    ]
+  },
+  "files_to_create": [
+    "app/src/main/java/com/phenix/wirelessadb/health/HealthCheckWorker.kt",
+    "app/src/main/java/com/phenix/wirelessadb/health/ConnectionHealthManager.kt",
+    "app/src/main/res/drawable/ic_health.xml",
+    "app/src/main/res/drawable/ic_health_warning.xml"
+  ],
+  "files_to_reference": [
+    "app/src/main/java/com/phenix/wirelessadb/AdbManager.kt",
+    "app/src/main/java/com/phenix/wirelessadb/AdbService.kt",
+    "app/src/main/java/com/phenix/wirelessadb/PrefsManager.kt",
+    "app/src/main/java/com/phenix/wirelessadb/viewmodel/AdbViewModel.kt",
+    "app/src/main/java/com/phenix/wirelessadb/ui/ControlFragment.kt"
+  ],
+  "patterns": {
+    "singleton_pattern": "Use 'object' keyword for singletons (e.g., AdbManager, PrefsManager)",
+    "preferences_pattern": "PrefsManager uses private const keys, getter/setter methods with context parameter",
+    "service_pattern": "Foreground service with companion object for start/stop, notification channel setup in onCreate",
+    "viewmodel_pattern": "AndroidViewModel with MutableLiveData private, exposed as LiveData, uses viewModelScope for coroutines",
+    "ui_pattern": "Fragment with ViewBinding, observers for LiveData in observeViewModel(), uses Toast for user feedback",
+    "async_pattern": "suspend functions in managers, viewModelScope.launch {} in ViewModels",
+    "notification_pattern": "NotificationCompat.Builder with channel ID, persistent notification for foreground service"
+  },
+  "existing_implementations": {
+    "description": "ADB management system with status checking, foreground service, and UI updates",
+    "relevant_files": [
+      "app/src/main/java/com/phenix/wirelessadb/AdbManager.kt",
+      "app/src/main/java/com/phenix/wirelessadb/AdbService.kt"
+    ],
+    "adb_status_check": "AdbManager.getStatus(context) returns AdbStatus with enabled, port, ip",
+    "preferences_storage": "PrefsManager singleton with SharedPreferences access",
+    "background_service": "AdbService is a foreground service with coroutineScope",
+    "missing_workmanager": "No WorkManager dependency or usage found - needs to be added"
+  },
+  "dependencies": {
+    "current": [
+      "androidx.core:core-ktx:1.12.0",
+      "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0",
+      "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0",
+      "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    ],
+    "to_add": [
+      "androidx.work:work-runtime-ktx:2.9.0"
+    ]
+  }
+}

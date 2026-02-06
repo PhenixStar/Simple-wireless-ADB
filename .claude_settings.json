@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor/**)",
+      "Glob(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor/**)",
+      "Grep(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor/**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor\\.auto-claude\\specs\\005-connection-health-monitor/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor\\.auto-claude\\specs\\005-connection-health-monitor/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude\\worktrees\\tasks\\005-connection-health-monitor\\.auto-claude\\specs\\005-connection-health-monitor/**)",
+      "Read(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Write(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Edit(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Glob(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Grep(D:\\AI\\Android\\APK\\Android-Apps\\apps\\wirelessadb\\.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}
