@@ -8,6 +8,9 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Monitors network connectivity changes to automatically re-enable wireless ADB
@@ -53,9 +56,29 @@ class NetworkChangeReceiver : BroadcastReceiver() {
     Log.d(TAG, "handleNetworkChange: isWifi=$isWifi")
 
     if (isWifi) {
-      // Auto-reconnect logic will be implemented in subtask-2-2
-      // For now, just log that WiFi is connected
-      Log.d(TAG, "handleNetworkChange: WiFi connected, ready for auto-reconnect")
+      Log.d(TAG, "handleNetworkChange: WiFi connected, checking auto-reconnect")
+
+      // Check if auto-reconnect is enabled
+      if (!PrefsManager.isAutoReconnectEnabled(context)) {
+        Log.d(TAG, "handleNetworkChange: Auto-reconnect is disabled")
+        return
+      }
+
+      val port = PrefsManager.getPort(context)
+
+      // Launch coroutine to check status and re-enable if needed
+      CoroutineScope(Dispatchers.IO).launch {
+        val status = AdbManager.getStatus(context)
+        Log.d(TAG, "handleNetworkChange: Current ADB status - enabled=${status.enabled}, port=${status.port}")
+
+        // Only re-enable if ADB was previously enabled
+        if (status.enabled) {
+          Log.d(TAG, "handleNetworkChange: Re-enabling ADB on port $port")
+          AdbManager.enable(port)
+        } else {
+          Log.d(TAG, "handleNetworkChange: ADB was not previously enabled, skipping auto-reconnect")
+        }
+      }
     }
   }
 
