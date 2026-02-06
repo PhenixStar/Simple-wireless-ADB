@@ -1,5 +1,6 @@
 package com.phenix.wirelessadb
 
+import android.content.Intent
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
@@ -43,9 +44,21 @@ class AdbTileService : TileService() {
   /**
    * Called when the user taps the tile.
    * Toggle wireless ADB on/off.
+   * Note: If device is locked, clicking opens MainActivity for security.
+   * Long-press always opens MainActivity (handled by system).
    */
   override fun onClick() {
     super.onClick()
+
+    // If device is locked, open the app instead of toggling (for security)
+    // The user can then enable ADB from the full app interface
+    if (isLocked) {
+      unlockAndRun {
+        openMainActivity()
+      }
+      return
+    }
+
     serviceScope.launch {
       try {
         val currentStatus = AdbManager.getStatus(applicationContext)
@@ -71,6 +84,19 @@ class AdbTileService : TileService() {
         Log.e(TAG, "onClick: error - ${e.message}")
       }
     }
+  }
+
+  /**
+   * Opens the main activity when the tile is long-pressed.
+   * This provides access to full app settings and features.
+   * Long-press is automatically handled by the Android system.
+   */
+  private fun openMainActivity() {
+    val intent = Intent(this, MainActivity::class.java).apply {
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
+    startActivityAndCollapse(intent)
+    Log.d(TAG, "Opening MainActivity from tile")
   }
 
   /**
