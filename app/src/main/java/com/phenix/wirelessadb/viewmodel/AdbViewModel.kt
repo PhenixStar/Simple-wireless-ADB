@@ -70,6 +70,10 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
   val p2pError: LiveData<String?> get() = p2pManager.error
   val p2pTunnelEndpoint: LiveData<String?> get() = p2pManager.tunnelEndpoint
 
+  // Connection Health Manager and state (v1.3.0)
+  val healthState: LiveData<com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState>
+    get() = com.phenix.wirelessadb.health.ConnectionHealthManager.healthState
+
   init {
     initializeShellExecutor()
     loadSavedPreferences()
