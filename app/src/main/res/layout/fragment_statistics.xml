@@ -50,7 +50,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_status_active"
-            android:tint="?colorPrimary"
+            app:tint="?colorPrimary"
             android:contentDescription="@string/stats_uptime" />
 
           <TextView
@@ -98,7 +98,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_devices"
-            android:tint="?colorPrimary"
+            app:tint="?colorPrimary"
             android:contentDescription="@string/stats_total_connections" />
 
           <TextView
@@ -148,7 +148,7 @@
           android:layout_width="40dp"
           android:layout_height="40dp"
           android:src="@drawable/ic_check"
-          android:tint="?colorPrimary"
+          app:tint="?colorPrimary"
           android:contentDescription="@string/stats_reliability" />
 
         <LinearLayout
@@ -251,7 +251,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:src="@drawable/ic_devices"
-            android:tint="?colorOnSurfaceVariant"
+            app:tint="?colorOnSurfaceVariant"
             android:alpha="0.5"
             android:contentDescription="@string/stats_no_data" />
 
