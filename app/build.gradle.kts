@@ -123,6 +123,9 @@ dependencies {
   // ZXing for QR code generation
   implementation("com.google.zxing:core:3.5.2")
 
+  // ZXing Android Embedded for QR code scanning
+  implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
   // Testing
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
