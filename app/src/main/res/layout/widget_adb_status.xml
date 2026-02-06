@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  HOME SCREEN WIDGET: ADB Status (v1.3.0)
+  =======================================
+  Compact widget for quick ADB control:
+  - Status icon + text
+  - IP:Port display (when connected)
+  - Toggle button (tap to enable/disable)
+  - Copy button (tap to copy connection string)
+
+  Note: Uses RemoteViews-compatible views only
+  (no MaterialCardView, no complex components)
+-->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:padding="12dp"
+  android:background="@drawable/bg_shimmer_card"
+  android:clickable="true">
+
+  <!-- Header: Status + Toggle -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingBottom="8dp">
+
+    <!-- Status Icon -->
+    <ImageView
+      android:id="@+id/widgetStatusIcon"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:src="@drawable/ic_indicator_wifi"
+      android:tint="@color/status_inactive"
+      android:contentDescription="@string/cd_status_icon" />
+
+    <!-- Status Text -->
+    <TextView
+      android:id="@+id/widgetStatusText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/status_disabled"
+      android:textSize="14sp"
+      android:textStyle="bold"
+      android:textColor="@color/on_surface"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp" />
+
+    <!-- Toggle Button -->
+    <ImageButton
+      android:id="@+id/widgetToggleButton"
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:src="@drawable/ic_check"
+      android:background="@drawable/bg_icon_container"
+      android:contentDescription="@string/btn_enable" />
+
+  </LinearLayout>
+
+  <!-- Separator -->
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/outline"
+    android:alpha="0.2"
+    android:layout_marginBottom="8dp" />
+
+  <!-- IP:Port Display (shown when connected) -->
+  <LinearLayout
+    android:id="@+id/widgetConnectionInfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:visibility="gone">
+
+    <!-- IP:Port Text -->
+    <TextView
+      android:id="@+id/widgetIpPortText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="192.168.1.100:5555"
+      android:textSize="16sp"
+      android:textStyle="bold"
+      android:fontFamily="monospace"
+      android:textColor="@color/primary"
+      android:contentDescription="@string/cd_ip_address" />
+
+    <!-- Copy Button -->
+    <ImageButton
+      android:id="@+id/widgetCopyButton"
+      android:layout_width="36dp"
+      android:layout_height="36dp"
+      android:src="@drawable/ic_copy"
+      android:background="@drawable/bg_icon_container_surface"
+      android:contentDescription="@string/cd_copy_button"
+      android:layout_marginStart="8dp" />
+
+  </LinearLayout>
+
+  <!-- Placeholder when disabled -->
+  <TextView
+    android:id="@+id/widgetPlaceholder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/status_disabled"
+    android:textSize="13sp"
+    android:textColor="@color/text_secondary"
+    android:fontFamily="sans-serif-medium"
+    android:gravity="center"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp" />
+
+</LinearLayout>
