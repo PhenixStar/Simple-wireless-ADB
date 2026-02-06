@@ -28,3 +28,6 @@ screenshot*.png
 temp/
 nul
 .serena/
+
+# Auto Claude data directory
+.auto-claude/
