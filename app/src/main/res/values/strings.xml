@@ -328,4 +328,7 @@
   <string name="devices_added_date">Added: %1$s</string>
   <string name="devices_requested_now">Requested: Now</string>
   <string name="devices_remove">Remove device</string>
+
+  <!-- Widget (v1.3.0) -->
+  <string name="widget_description">Quick ADB status and toggle control</string>
 </resources>
