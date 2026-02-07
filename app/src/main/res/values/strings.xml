@@ -34,9 +34,7 @@
 
   <!-- Status -->
   <string name="status_connected">Connected</string>
-  <string name="status_enabled">Enabled</string>
   <string name="status_disabled">Disabled</string>
-  <string name="status_error">Error</string>
   <string name="status_checking">Checking…</string>
 
   <!-- Buttons -->
@@ -144,6 +142,14 @@
   <string name="settings_hide_notification">Hide USB debugging notification</string>
   <string name="settings_hide_notification_desc">Hides the system notification when ADB is enabled (requires root)</string>
 
+  <!-- Health Monitoring (v1.3.0) -->
+  <string name="settings_health_monitoring">Connection health monitoring</string>
+  <string name="settings_health_monitoring_desc">Monitor ADB connection and alert on issues</string>
+  <string name="settings_health_check_interval">Health check interval</string>
+  <string name="settings_health_check_interval_desc">How often to check connection status</string>
+  <string name="cd_health_monitoring_toggle">Toggle health monitoring</string>
+  <string name="cd_health_check_interval">Health check interval setting</string>
+
   <!-- Shizuku (v1.1.0) -->
   <string name="shizuku_title">Shizuku Mode</string>
   <string name="shizuku_desc">Using Shizuku for ADB control (limited features)</string>
@@ -229,23 +235,6 @@
   <string name="p2p_share_subject">P2P Connection Token</string>
   <string name="p2p_show_qr">Show QR Code</string>
 
-  <!-- QR Scanner Dialog (v1.3.0) -->
-  <string name="scanner_title">Scan QR Code</string>
-  <string name="scanner_instructions">Point your camera at a QR code to scan the pairing information</string>
-  <string name="scanner_permission_required">Camera permission required to scan QR codes</string>
-  <string name="scanner_permission_denied">Camera permission denied. Please enable it in Settings.</string>
-  <string name="scanner_grant_permission">Grant Permission</string>
-  <string name="scanner_error">Failed to scan QR code</string>
-  <string name="scanner_error_invalid_qr">Invalid QR code format</string>
-  <string name="scanner_invalid_code">Invalid QR code format</string>
-  <string name="scanner_success">QR code scanned successfully</string>
-  <string name="scanner_processing">Processing QR code…</string>
-  <string name="scanner_scanning">Scanning…</string>
-  <string name="btn_scan_qr">Scan QR Code</string>
-  <string name="pairing_scan_qr_button">Scan QR Code</string>
-  <string name="pairing_or_scan">or scan QR code:</string>
-  <string name="scanner_cancel">Cancel</string>
-
   <!-- Common Actions -->
   <string name="close">Close</string>
   <string name="share">Share</string>
@@ -287,6 +276,7 @@
   <string name="cd_ip_address">IP address</string>
   <string name="cd_connection_command">ADB connection command</string>
   <string name="cd_status_icon">Status indicator icon</string>
+  <string name="cd_health_indicator">Connection health indicator</string>
 
   <!-- Tab content descriptions (v1.3.0) -->
   <string name="cd_tab_control">Control tab</string>
@@ -347,11 +337,33 @@
   <string name="devices_added_date">Added: %1$s</string>
   <string name="devices_requested_now">Requested: Now</string>
   <string name="devices_remove">Remove device</string>
-<!-- Widget (v1.3.0) -->
+
+  <!-- QR Scanner Dialog (v1.3.0) -->
+  <string name="scanner_title">Scan QR Code</string>
+  <string name="scanner_instructions">Point your camera at a QR code to scan the pairing information</string>
+  <string name="scanner_permission_required">Camera permission required to scan QR codes</string>
+  <string name="scanner_permission_denied">Camera permission denied. Please enable it in Settings.</string>
+  <string name="scanner_grant_permission">Grant Permission</string>
+  <string name="scanner_error">Failed to scan QR code</string>
+  <string name="scanner_error_invalid_qr">Invalid QR code format</string>
+  <string name="scanner_invalid_code">Invalid QR code format</string>
+  <string name="scanner_success">QR code scanned successfully</string>
+  <string name="scanner_processing">Processing QR code…</string>
+  <string name="scanner_scanning">Scanning…</string>
+  <string name="btn_scan_qr">Scan QR Code</string>
+  <string name="pairing_scan_qr_button">Scan QR Code</string>
+  <string name="pairing_or_scan">or scan QR code:</string>
+  <string name="scanner_cancel">Cancel</string>
+
+  <string name="status_enabled">Enabled</string>
+  <string name="status_error">Error</string>
+
+  <!-- Widget (v1.3.0) -->
   <string name="widget_description">Quick ADB status and toggle control</string>
 
-<!-- Quick Settings Tile (v1.3.0+) -->
+  <!-- Quick Settings Tile (v1.3.0+) -->
   <string name="tile_label">Wireless ADB</string>
   <string name="tile_subtitle_active">Active on port %1$d</string>
   <string name="tile_subtitle_inactive">Tap to enable</string>
+
 </resources>

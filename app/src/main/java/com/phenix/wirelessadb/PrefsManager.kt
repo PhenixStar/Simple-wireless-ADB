@@ -36,13 +36,21 @@ object PrefsManager {
   private const val KEY_WARPGATE_TARGET = "warpgate_target"
   private const val KEY_WARPGATE_LOCAL_PORT = "warpgate_local_port"
 
-  // Auto-reconnect settings
+  // Health monitoring settings
+  private const val KEY_HEALTH_CHECK_INTERVAL = "health_check_interval"
   private const val KEY_AUTO_RECONNECT_ENABLED = "auto_reconnect_enabled"
+  private const val KEY_MAX_RECONNECT_ATTEMPTS = "max_reconnect_attempts"
+  private const val KEY_RECONNECT_DELAY = "reconnect_delay"
+  private const val DEFAULT_HEALTH_CHECK_INTERVAL = 30000L // 30 seconds
+  private const val DEFAULT_MAX_RECONNECT_ATTEMPTS = 3
+  private const val DEFAULT_RECONNECT_DELAY = 5000L // 5 seconds
+
+
+  // Auto-reconnect settings
   private const val KEY_AUTO_RECONNECT_DELAY = "auto_reconnect_delay"
   private const val KEY_AUTO_RECONNECT_MAX_RETRIES = "auto_reconnect_max_retries"
   private const val DEFAULT_AUTO_RECONNECT_DELAY = 5000 // 5 seconds
   private const val DEFAULT_AUTO_RECONNECT_MAX_RETRIES = 3
-
   // Trusted networks settings
   private const val KEY_TRUSTED_NETWORKS = "trusted_networks"
 
@@ -160,7 +168,15 @@ object PrefsManager {
     getPrefs(context).edit().putInt(KEY_ACCENT_COLOR, color.ordinal).apply()
   }
 
-  // Auto-reconnect Configuration
+  // Health Monitoring
+  fun getHealthCheckInterval(context: Context): Long {
+    return getPrefs(context).getLong(KEY_HEALTH_CHECK_INTERVAL, DEFAULT_HEALTH_CHECK_INTERVAL)
+  }
+
+  fun setHealthCheckInterval(context: Context, interval: Long) {
+    getPrefs(context).edit().putLong(KEY_HEALTH_CHECK_INTERVAL, interval).apply()
+  }
+
   fun isAutoReconnectEnabled(context: Context): Boolean {
     return getPrefs(context).getBoolean(KEY_AUTO_RECONNECT_ENABLED, true)
   }
@@ -169,6 +185,24 @@ object PrefsManager {
     getPrefs(context).edit().putBoolean(KEY_AUTO_RECONNECT_ENABLED, enabled).apply()
   }
 
+  fun getMaxReconnectAttempts(context: Context): Int {
+    return getPrefs(context).getInt(KEY_MAX_RECONNECT_ATTEMPTS, DEFAULT_MAX_RECONNECT_ATTEMPTS)
+  }
+
+  fun setMaxReconnectAttempts(context: Context, attempts: Int) {
+    getPrefs(context).edit().putInt(KEY_MAX_RECONNECT_ATTEMPTS, attempts).apply()
+  }
+
+  fun getReconnectDelay(context: Context): Long {
+    return getPrefs(context).getLong(KEY_RECONNECT_DELAY, DEFAULT_RECONNECT_DELAY)
+  }
+
+  fun setReconnectDelay(context: Context, delay: Long) {
+    getPrefs(context).edit().putLong(KEY_RECONNECT_DELAY, delay).apply()
+  }
+
+
+  // Auto-reconnect Configuration
   fun getAutoReconnectDelay(context: Context): Int {
     return getPrefs(context).getInt(KEY_AUTO_RECONNECT_DELAY, DEFAULT_AUTO_RECONNECT_DELAY)
   }

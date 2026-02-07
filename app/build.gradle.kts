@@ -110,6 +110,9 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
   implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
+  // WorkManager for background tasks
+  implementation("androidx.work:work-runtime-ktx:2.9.0")
+
   // JSch for SSH tunneling (Warpgate) - Updated to maintained fork
   implementation("com.github.mwiede:jsch:2.27.7")
 

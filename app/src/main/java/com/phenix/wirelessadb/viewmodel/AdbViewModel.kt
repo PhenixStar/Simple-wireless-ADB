@@ -70,6 +70,10 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
   val p2pError: LiveData<String?> get() = p2pManager.error
   val p2pTunnelEndpoint: LiveData<String?> get() = p2pManager.tunnelEndpoint
 
+  // Connection Health Manager and state (v1.3.0)
+  val healthState: LiveData<com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState>
+    get() = com.phenix.wirelessadb.health.ConnectionHealthManager.healthState
+
   init {
     initializeShellExecutor()
     loadSavedPreferences()
@@ -156,6 +160,15 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
 
       result.onSuccess {
         refreshStatus()
+
+        // Start/stop health monitoring based on new ADB state
+        if (!isEnabled && isAutoReconnectEnabled()) {
+          // ADB was just enabled and auto-reconnect is on
+          startHealthMonitoring()
+        } else if (isEnabled) {
+          // ADB was just disabled
+          stopHealthMonitoring()
+        }
         // Notify widgets and other components about ADB status change
         com.phenix.wirelessadb.widget.AdbWidgetProvider.notifyStatusChanged(context)
       }.onFailure { e ->
@@ -298,6 +311,33 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
 
   fun getPort(): Int = PrefsManager.getPort(context)
   fun getRelayPort(): Int = PrefsManager.getRelayPort(context)
+
+  // Health Monitoring (v1.3.0)
+  fun getHealthCheckInterval(): Long = PrefsManager.getHealthCheckInterval(context)
+  fun setHealthCheckInterval(interval: Long) = PrefsManager.setHealthCheckInterval(context, interval)
+
+  fun isAutoReconnectEnabled(): Boolean = PrefsManager.isAutoReconnectEnabled(context)
+  fun setAutoReconnectEnabled(enabled: Boolean) {
+    PrefsManager.setAutoReconnectEnabled(context, enabled)
+    if (enabled && _adbStatus.value?.enabled == true) {
+      startHealthMonitoring()
+    } else {
+      stopHealthMonitoring()
+    }
+  }
+
+  fun startHealthMonitoring() {
+    viewModelScope.launch {
+      val interval = getHealthCheckInterval()
+      com.phenix.wirelessadb.health.ConnectionHealthManager.startMonitoring(context, interval / 1000)
+    }
+  }
+
+  fun stopHealthMonitoring() {
+    viewModelScope.launch {
+      com.phenix.wirelessadb.health.ConnectionHealthManager.stopMonitoring(context)
+    }
+  }
 
   // P2P Token methods (v1.2.0)
   fun generateP2PToken() {

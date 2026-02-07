@@ -63,6 +63,15 @@
             android:layout_marginStart="12dp"
             android:accessibilityLiveRegion="polite" />
 
+          <ImageView
+            android:id="@+id/healthIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_health"
+            android:visibility="gone"
+            android:contentDescription="@string/cd_health_indicator" />
+
           <com.google.android.material.button.MaterialButton
             android:id="@+id/copyButton"
             style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
@@ -310,6 +319,18 @@
             android:textSize="14sp"
             android:textColor="?colorOnSurface"
             android:contentDescription="@string/cd_notification_toggle"
+            android:accessibilityLiveRegion="polite" />
+
+          <!-- Health Monitoring -->
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/healthMonitoringSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/settings_health_monitoring"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurface"
+            android:contentDescription="@string/cd_health_monitoring_toggle"
             android:accessibilityLiveRegion="polite" />
 
         </LinearLayout>
