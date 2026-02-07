@@ -235,6 +235,23 @@
   <string name="p2p_share_subject">P2P Connection Token</string>
   <string name="p2p_show_qr">Show QR Code</string>
 
+  <!-- QR Scanner Dialog (v1.3.0) -->
+  <string name="scanner_title">Scan QR Code</string>
+  <string name="scanner_instructions">Point your camera at a QR code to scan the pairing information</string>
+  <string name="scanner_permission_required">Camera permission required to scan QR codes</string>
+  <string name="scanner_permission_denied">Camera permission denied. Please enable it in Settings.</string>
+  <string name="scanner_grant_permission">Grant Permission</string>
+  <string name="scanner_error">Failed to scan QR code</string>
+  <string name="scanner_error_invalid_qr">Invalid QR code format</string>
+  <string name="scanner_invalid_code">Invalid QR code format</string>
+  <string name="scanner_success">QR code scanned successfully</string>
+  <string name="scanner_processing">Processing QR code…</string>
+  <string name="scanner_scanning">Scanning…</string>
+  <string name="btn_scan_qr">Scan QR Code</string>
+  <string name="pairing_scan_qr_button">Scan QR Code</string>
+  <string name="pairing_or_scan">or scan QR code:</string>
+  <string name="scanner_cancel">Cancel</string>
+
   <!-- Common Actions -->
   <string name="close">Close</string>
   <string name="share">Share</string>
@@ -338,23 +355,6 @@
   <string name="devices_requested_now">Requested: Now</string>
   <string name="devices_remove">Remove device</string>
 
-  <!-- QR Scanner Dialog (v1.3.0) -->
-  <string name="scanner_title">Scan QR Code</string>
-  <string name="scanner_instructions">Point your camera at a QR code to scan the pairing information</string>
-  <string name="scanner_permission_required">Camera permission required to scan QR codes</string>
-  <string name="scanner_permission_denied">Camera permission denied. Please enable it in Settings.</string>
-  <string name="scanner_grant_permission">Grant Permission</string>
-  <string name="scanner_error">Failed to scan QR code</string>
-  <string name="scanner_error_invalid_qr">Invalid QR code format</string>
-  <string name="scanner_invalid_code">Invalid QR code format</string>
-  <string name="scanner_success">QR code scanned successfully</string>
-  <string name="scanner_processing">Processing QR code…</string>
-  <string name="scanner_scanning">Scanning…</string>
-  <string name="btn_scan_qr">Scan QR Code</string>
-  <string name="pairing_scan_qr_button">Scan QR Code</string>
-  <string name="pairing_or_scan">or scan QR code:</string>
-  <string name="scanner_cancel">Cancel</string>
-
   <string name="status_enabled">Enabled</string>
   <string name="status_error">Error</string>
 
@@ -366,4 +366,16 @@
   <string name="tile_subtitle_active">Active on port %1$d</string>
   <string name="tile_subtitle_inactive">Tap to enable</string>
 
+  <!-- Statistics (v1.3.0 - Task 008) -->
+  <string name="tab_statistics">Statistics</string>
+  <string name="cd_tab_statistics">Statistics tab</string>
+  <string name="stats_uptime">Uptime</string>
+  <string name="stats_total_connections">Total Connections</string>
+  <string name="stats_reliability">Reliability Score</string>
+  <string name="stats_reliability_format">%.1f%%</string>
+  <string name="stats_recent_connections">Recent Connections</string>
+  <string name="stats_no_data">No data yet</string>
+  <string name="stats_no_data_description">Connection statistics will appear here once ADB is enabled</string>
+  <string name="stats_duration_format">Duration: %1$s</string>
+  <string name="stats_active">Active</string>
 </resources>

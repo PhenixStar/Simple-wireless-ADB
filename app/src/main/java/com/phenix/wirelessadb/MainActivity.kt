@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
       val tabName = when (position) {
         MainPagerAdapter.TAB_CONTROL -> getString(R.string.tab_control)
         MainPagerAdapter.TAB_DEVICES -> getString(R.string.tab_devices)
+        MainPagerAdapter.TAB_STATISTICS -> getString(R.string.tab_statistics)
         MainPagerAdapter.TAB_HELP -> getString(R.string.tab_help)
         else -> null
       }
@@ -121,6 +122,7 @@ class MainActivity : AppCompatActivity() {
       tab.contentDescription = when (position) {
         MainPagerAdapter.TAB_CONTROL -> getString(R.string.cd_tab_control)
         MainPagerAdapter.TAB_DEVICES -> getString(R.string.cd_tab_devices)
+        MainPagerAdapter.TAB_STATISTICS -> getString(R.string.cd_tab_statistics)
         MainPagerAdapter.TAB_HELP -> getString(R.string.cd_tab_help)
         else -> tabName
       }

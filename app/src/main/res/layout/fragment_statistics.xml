@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TAB 3: STATISTICS (v1.3.0)
+  ==========================
+  Connection statistics dashboard:
+  - Uptime Card: Total uptime since install
+  - Connections Card: Total connection count
+  - Reliability Card: Reliability score percentage
+  - Recent Connections: RecyclerView with connection history
+-->
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fillViewport="true">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Statistics Summary Row -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:baselineAligned="false">
+
+      <!-- Uptime Card -->
+      <com.google.android.material.card.MaterialCardView
+        android:id="@+id/uptimeCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="?colorSurface">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="16dp"
+          android:gravity="center">
+
+          <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_status_active"
+            app:tint="?colorPrimary"
+            android:contentDescription="@string/stats_uptime" />
+
+          <TextView
+            android:id="@+id/uptimeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface"
+            android:layout_marginTop="8dp"
+            android:accessibilityLiveRegion="polite" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_uptime"
+            android:textSize="12sp"
+            android:textColor="?colorOnSurfaceVariant"
+            android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+      </com.google.android.material.card.MaterialCardView>
+
+      <!-- Total Connections Card -->
+      <com.google.android.material.card.MaterialCardView
+        android:id="@+id/connectionsCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="?colorSurface">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="16dp"
+          android:gravity="center">
+
+          <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_devices"
+            app:tint="?colorPrimary"
+            android:contentDescription="@string/stats_total_connections" />
+
+          <TextView
+            android:id="@+id/connectionsValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface"
+            android:layout_marginTop="8dp"
+            android:accessibilityLiveRegion="polite" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_total_connections"
+            android:textSize="12sp"
+            android:textColor="?colorOnSurfaceVariant"
+            android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+      </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <!-- Reliability Score Card -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/reliabilityCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+          android:id="@+id/reliabilityIcon"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
+          android:src="@drawable/ic_check"
+          app:tint="?colorPrimary"
+          android:contentDescription="@string/stats_reliability" />
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:orientation="vertical"
+          android:layout_marginStart="16dp">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_reliability"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="?colorPrimary"
+            android:letterSpacing="0.1" />
+
+          <TextView
+            android:id="@+id/reliabilityValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface"
+            android:layout_marginTop="4dp"
+            android:accessibilityLiveRegion="polite" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Recent Connections Card -->
+    <com.google.android.material.card.MaterialCardView
+      android:id="@+id/recentCard"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:layout_marginTop="16dp"
+      app:cardCornerRadius="20dp"
+      app:cardElevation="2dp"
+      app:cardBackgroundColor="?colorSurface">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Recent Connections Header -->
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:padding="16dp"
+          android:gravity="center_vertical">
+
+          <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/stats_recent_connections"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface" />
+
+          <TextView
+            android:id="@+id/recentCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(0)"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurfaceVariant" />
+
+        </LinearLayout>
+
+        <!-- Recent Connections List -->
+        <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/recentConnectionsRecycler"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="1"
+          android:clipToPadding="false"
+          android:paddingBottom="8dp" />
+
+        <!-- Empty State -->
+        <LinearLayout
+          android:id="@+id/emptyState"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="1"
+          android:orientation="vertical"
+          android:gravity="center"
+          android:padding="32dp"
+          android:visibility="gone">
+
+          <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_devices"
+            app:tint="?colorOnSurfaceVariant"
+            android:alpha="0.5"
+            android:contentDescription="@string/stats_no_data" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_no_data"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?colorOnSurface"
+            android:layout_marginTop="16dp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_no_data_description"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurfaceVariant"
+            android:layout_marginTop="8dp"
+            android:gravity="center" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+  </LinearLayout>
+
+</ScrollView>
