@@ -129,12 +129,8 @@ class HelpFragment : Fragment() {
             updateAccentButtonSelection(btn, clr == color)
           }
 
-          // Show message that activity restart is needed
-          Toast.makeText(
-            requireContext(),
-            "Accent color changed. Restart app to apply.",
-            Toast.LENGTH_SHORT
-          ).show()
+          // Recreate activity to apply new accent color immediately
+          activity?.recreate()
         }
       }
     }
@@ -165,8 +161,10 @@ class HelpFragment : Fragment() {
         putExtra(Intent.EXTRA_TEXT, body)
       }
     }
-    if (intent.resolveActivity(requireContext().packageManager) != null) {
+    try {
       startActivity(intent)
+    } catch (e: android.content.ActivityNotFoundException) {
+      Toast.makeText(requireContext(), "No email app found", Toast.LENGTH_SHORT).show()
     }
   }
 

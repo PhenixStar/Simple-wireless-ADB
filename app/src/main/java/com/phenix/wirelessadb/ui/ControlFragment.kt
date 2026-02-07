@@ -21,6 +21,7 @@ import com.phenix.wirelessadb.p2p.P2PState
 import com.phenix.wirelessadb.pairing.AdbPairingManager
 import com.phenix.wirelessadb.util.AccessibilityHelper.announceForAccessibility
 import com.phenix.wirelessadb.util.AccessibilityHelper.setStateDescription
+import com.phenix.wirelessadb.relay.TailscaleHelper
 import com.phenix.wirelessadb.viewmodel.AdbViewModel
 import com.phenix.wirelessadb.warpgate.WarpgateConfig
 
@@ -212,6 +213,10 @@ class ControlFragment : Fragment() {
       viewModel.setRelayEnabled(checked)
       if (checked) {
         viewModel.setConnectionMode(ConnectionMode.TAILSCALE_RELAY)
+        // Launch Tailscale if not active
+        if (!TailscaleHelper.isTailscaleActive()) {
+          TailscaleHelper.launchTailscale(requireContext())
+        }
       } else {
         viewModel.setConnectionMode(ConnectionMode.TAILSCALE_DIRECT)
       }

@@ -10,6 +10,22 @@
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <uses-permission android:name="android.permission.CAMERA" />
 
+  <queries>
+    <intent>
+      <action android:name="android.intent.action.SENDTO" />
+      <data android:scheme="mailto" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="https" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="market" />
+    </intent>
+    <package android:name="com.tailscale.ipn" />
+  </queries>
+
   <application
     android:allowBackup="true"
     android:icon="@drawable/ic_launcher"

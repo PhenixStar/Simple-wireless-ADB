@@ -1,7 +1,11 @@
 package com.phenix.wirelessadb.relay
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Uri
+import android.widget.Toast
 import android.net.NetworkCapabilities
 import android.util.Log
 import java.net.Inet4Address
@@ -16,6 +20,8 @@ object TailscaleHelper {
 
   // Tailscale uses CGNAT range starting with 100.
   private const val TAILSCALE_PREFIX = "100."
+  private const val TAILSCALE_PACKAGE = "com.tailscale.ipn"
+  private const val TAILSCALE_PLAY_STORE = "https://play.google.com/store/apps/details?id=com.tailscale.ipn"
 
   /**
    * Get the device's Tailscale IP address if connected.
@@ -155,5 +161,45 @@ object TailscaleHelper {
    */
   fun isTailscaleActive(): Boolean {
     return getTailscaleIp() != null
+  }
+
+  /**
+   * Check if the Tailscale app is installed on this device.
+   */
+  fun isTailscaleInstalled(context: Context): Boolean {
+    return try {
+      context.packageManager.getPackageInfo(TAILSCALE_PACKAGE, 0)
+      true
+    } catch (e: Exception) {
+      false
+    }
+  }
+
+  /**
+   * Launch the Tailscale app, or open Play Store to install it.
+   * @return true if Tailscale was launched, false if redirected to Play Store
+   */
+  fun launchTailscale(context: Context): Boolean {
+    if (isTailscaleInstalled(context)) {
+      val launchIntent = context.packageManager.getLaunchIntentForPackage(TAILSCALE_PACKAGE)
+      if (launchIntent != null) {
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(launchIntent)
+        return true
+      }
+    }
+
+    // Not installed — open Play Store
+    try {
+      val storeIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$TAILSCALE_PACKAGE"))
+      storeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(storeIntent)
+    } catch (e: ActivityNotFoundException) {
+      val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(TAILSCALE_PLAY_STORE))
+      webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(webIntent)
+    }
+    Toast.makeText(context, "Please install Tailscale to use relay mode", Toast.LENGTH_LONG).show()
+    return false
   }
 }

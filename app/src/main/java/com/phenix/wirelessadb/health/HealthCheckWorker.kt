@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.phenix.wirelessadb.AdbManager
+import com.phenix.wirelessadb.PrefsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -66,7 +67,7 @@ class HealthCheckWorker(
       Log.d(TAG, "Current status: enabled=${status.enabled}, port=${status.port}, ip=${status.ip}")
 
       // Detect connection degradation
-      val degradationDetected = detectDegradation(
+      var degradationDetected = detectDegradation(
         lastKnownEnabled = lastKnownEnabled,
         lastKnownPort = lastKnownPort,
         lastKnownIp = lastKnownIp,
@@ -75,9 +76,30 @@ class HealthCheckWorker(
         currentIp = status.ip
       )
 
+      // Auto-reconnect: if ADB was enabled but dropped, try to re-enable
+      var currentEnabled = status.enabled
+      var currentPort = status.port
+      var currentIp = status.ip
+      if (lastKnownEnabled && !status.enabled && PrefsManager.isAutoReconnectEnabled(applicationContext)) {
+        val reconnectPort = if (lastKnownPort > 0) lastKnownPort else PrefsManager.getPort(applicationContext)
+        Log.i(TAG, "Auto-reconnect: ADB dropped, re-enabling on port $reconnectPort")
+        val result = AdbManager.enable(reconnectPort)
+        if (result.isSuccess) {
+          // Recheck status after re-enable
+          val recheckStatus = AdbManager.getStatus(applicationContext)
+          currentEnabled = recheckStatus.enabled
+          currentPort = recheckStatus.port
+          currentIp = recheckStatus.ip
+          degradationDetected = !recheckStatus.enabled
+          Log.i(TAG, "Auto-reconnect: success=$currentEnabled, port=$currentPort")
+        } else {
+          Log.w(TAG, "Auto-reconnect: failed - ${result.exceptionOrNull()?.message}")
+        }
+      }
+
       // Determine health status
       val healthStatus = when {
-        !status.enabled -> HEALTH_FAILED
+        !currentEnabled -> HEALTH_FAILED
         degradationDetected -> HEALTH_DEGRADED
         else -> HEALTH_HEALTHY
       }
@@ -87,9 +109,9 @@ class HealthCheckWorker(
       // Return success with output data
       Result.success(
         androidx.work.workDataOf(
-          KEY_CURRENT_ENABLED to status.enabled,
-          KEY_CURRENT_PORT to status.port,
-          KEY_CURRENT_IP to (status.ip ?: ""),
+          KEY_CURRENT_ENABLED to currentEnabled,
+          KEY_CURRENT_PORT to currentPort,
+          KEY_CURRENT_IP to (currentIp ?: ""),
           KEY_HEALTH_STATUS to healthStatus,
           KEY_DEGRADATION_DETECTED to degradationDetected
         )

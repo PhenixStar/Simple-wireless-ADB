@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- App info -->
-  <string name="app_name">RootADB Pro</string>
-  <string name="app_name_short">RootADB Pro</string>
-  <string name="app_name_full">RootADB Pro</string>
+  <string name="app_name">Sticky ADB</string>
+  <string name="app_name_short">Sticky ADB</string>
+  <string name="app_name_full">Sticky ADB</string>
   <string name="app_subtitle">by Phenix</string>
   <string name="version_format">Version %1$s</string>
 
@@ -94,7 +94,7 @@
   <string name="help_pc_scripts_content">Download auto-connect scripts for your PC. Available for Windows (PowerShell) and Linux/Mac (bash). Scripts auto-detect your device and connect automatically.</string>
 
   <string name="help_split_tunnel">Recommended: Split Tunnel Setup</string>
-  <string name="help_split_tunnel_content">For best performance with Tailscale remote access:\n\n1. Open Tailscale app on your phone\n2. Go to Settings → Split Tunneling\n3. Enable \"Use Tailscale for specific apps\"\n4. Add only: RootADB Pro\n\nThis routes only ADB traffic through Tailscale, keeping other apps at full speed while maintaining remote ADB access.</string>
+  <string name="help_split_tunnel_content">For best performance with Tailscale remote access:\n\n1. Open Tailscale app on your phone\n2. Go to Settings → Split Tunneling\n3. Enable \"Use Tailscale for specific apps\"\n4. Add only: Sticky ADB\n\nThis routes only ADB traffic through Tailscale, keeping other apps at full speed while maintaining remote ADB access.</string>
 
   <!-- Developer info -->
   <string name="developer_label">Developer</string>
@@ -102,8 +102,8 @@
   <string name="developer_email">alaa@nulled.ai</string>
 
   <!-- Email subjects -->
-  <string name="email_subject_contact">RootADB Pro - Contact</string>
-  <string name="email_subject_bug">RootADB Pro - Bug Report</string>
+  <string name="email_subject_contact">Sticky ADB - Contact</string>
+  <string name="email_subject_bug">Sticky ADB - Bug Report</string>
 
   <!-- Footer -->
   <string name="footer_root_required">Requires root access</string>
@@ -220,7 +220,7 @@
 
   <!-- QR Code Dialog -->
   <string name="qr_title">P2P Token QR Code</string>
-  <string name="qr_instructions">Scan this QR code with another device running RootADB Pro to connect instantly via P2P token.</string>
+  <string name="qr_instructions">Scan this QR code with another device running Sticky ADB to connect instantly via P2P token.</string>
   <string name="show_qr">Show QR</string>
   <string name="qr_close">Close</string>
 

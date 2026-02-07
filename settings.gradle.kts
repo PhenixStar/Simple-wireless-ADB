@@ -14,5 +14,5 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "WirelessADB"
+rootProject.name = "StickyADB"
 include(":app")
