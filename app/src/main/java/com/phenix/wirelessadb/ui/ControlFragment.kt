@@ -176,6 +176,14 @@ class ControlFragment : Fragment() {
           viewModel.showDevNotification()
         }
       }
+
+      // Health monitoring switch
+      healthMonitoringSwitch.isChecked = viewModel.isAutoReconnectEnabled()
+      healthMonitoringSwitch.setOnCheckedChangeListener { _, checked ->
+        healthMonitoringSwitch.setStateDescription(getString(R.string.settings_health_monitoring), checked)
+        healthMonitoringSwitch.announceForAccessibility(getString(R.string.announcement_settings_changed))
+        viewModel.setAutoReconnectEnabled(checked)
+      }
     }
   }
 
@@ -418,6 +426,11 @@ class ControlFragment : Fragment() {
         viewModel.clearP2PError()
       }
     }
+
+    // Connection Health
+    viewModel.healthState.observe(viewLifecycleOwner) { healthState ->
+      updateHealthIndicator(healthState)
+    }
   }
 
   private fun updateLocalConfigEnabled(hasRoot: Boolean) {
@@ -568,6 +581,31 @@ class ControlFragment : Fragment() {
       val command = viewModel.getConnectionCommand()
       commandText.text = command.ifEmpty { getString(R.string.adb_not_active) }
       copyButton.isEnabled = command.isNotEmpty()
+    }
+  }
+
+  private fun updateHealthIndicator(healthState: com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState) {
+    binding.apply {
+      when (healthState) {
+        com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState.HEALTHY -> {
+          healthIcon.visibility = View.VISIBLE
+          healthIcon.setImageResource(R.drawable.ic_health)
+          healthIcon.contentDescription = "Connection health: healthy"
+        }
+        com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState.DEGRADED -> {
+          healthIcon.visibility = View.VISIBLE
+          healthIcon.setImageResource(R.drawable.ic_health_warning)
+          healthIcon.contentDescription = "Connection health: degraded"
+        }
+        com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState.FAILED -> {
+          healthIcon.visibility = View.VISIBLE
+          healthIcon.setImageResource(R.drawable.ic_health_warning)
+          healthIcon.contentDescription = "Connection health: failed"
+        }
+        com.phenix.wirelessadb.health.ConnectionHealthManager.HealthState.UNKNOWN -> {
+          healthIcon.visibility = View.GONE
+        }
+      }
     }
   }
 

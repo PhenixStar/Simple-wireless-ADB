@@ -1,0 +1,38 @@
+{
+  "project_type": "single",
+  "services": {
+    "android-app": {
+      "path": ".",
+      "tech_stack": ["kotlin", "android", "coroutines", "viewmodel", "livedata"],
+      "sdk_version": 34,
+      "min_sdk": 26,
+      "build_command": "./gradlew assembleDebug",
+      "test_command": "./gradlew test",
+      "install_command": "./gradlew installDebug"
+    }
+  },
+  "infrastructure": {
+    "docker": false,
+    "ci_cd": "github_actions",
+    "database": "shared_preferences"
+  },
+  "conventions": {
+    "language": "kotlin",
+    "architecture": "mvvm",
+    "ui_pattern": "viewbinding",
+    "state_management": "livedata",
+    "async": "coroutines",
+    "di": "manual",
+    "preferences": "shared_preferences",
+    "background_jobs": "workmanager",
+    "naming": {
+      "managers": "ObjectManager (singleton object)",
+      "services": "ServiceName (extends Service)",
+      "viewmodels": "NameViewModel (extends AndroidViewModel)",
+      "fragments": "NameFragment (extends Fragment)",
+      "preferences": "PrefsManager singleton",
+      "icons": "ic_name.xml",
+      "layouts": "fragment_name.xml"
+    }
+  }
+}

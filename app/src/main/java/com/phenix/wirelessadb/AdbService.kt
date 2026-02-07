@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.phenix.wirelessadb.model.ConnectionMode
@@ -23,16 +24,23 @@ import kotlinx.coroutines.launch
 
 class AdbService : Service() {
 
+  private val TAG = "AdbService"
   private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
   private var relayServer: AdbRelayServer? = null
   private var serviceStartTime: Long = 0L
+  private var currentIp: String = "Unknown"
+  private var currentPort: Int = 5555
+  private var currentRelayEnabled: Boolean = false
 
   companion object {
     private const val CHANNEL_ID = "adb_service_channel"
+    private const val HEALTH_CHANNEL_ID = "adb_health_channel"
     private const val NOTIFICATION_ID = 1001
+    private const val HEALTH_NOTIFICATION_ID = 1002
     const val ACTION_PENDING_AUTH = "com.phenix.wirelessadb.PENDING_AUTH"
     const val ACTION_APPROVE_DEVICE = "com.phenix.wirelessadb.APPROVE_DEVICE"
     const val ACTION_DENY_DEVICE = "com.phenix.wirelessadb.DENY_DEVICE"
+    const val ACTION_NETWORK_CHANGED = "com.phenix.wirelessadb.NETWORK_CHANGED"
     const val EXTRA_CLIENT_IP = "client_ip"
 
     fun start(context: Context, ip: String, port: Int, relayEnabled: Boolean = false) {
@@ -67,6 +75,13 @@ class AdbService : Service() {
       }
       context.startService(intent)
     }
+
+    fun onNetworkChanged(context: Context) {
+      val intent = Intent(context, AdbService::class.java).apply {
+        action = ACTION_NETWORK_CHANGED
+      }
+      context.startService(intent)
+    }
   }
 
   override fun onCreate() {
@@ -77,6 +92,19 @@ class AdbService : Service() {
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
+      "com.phenix.wirelessadb.HEALTH_DEGRADATION" -> {
+        val healthStatus = intent.getStringExtra("health_status") ?: "UNKNOWN"
+        val degradationDetected = intent.getBooleanExtra("degradation_detected", false)
+
+        val details = when {
+          healthStatus == "FAILED" -> "ADB connection is disabled or unreachable"
+          healthStatus == "DEGRADED" -> "ADB connection has changed (IP/port/network)"
+          else -> "Connection health issue detected"
+        }
+
+        showHealthDegradationAlert(healthStatus, details)
+        return START_NOT_STICKY
+      }
       ACTION_APPROVE_DEVICE -> {
         val clientIp = intent.getStringExtra(EXTRA_CLIENT_IP)
         if (clientIp != null) {
@@ -91,11 +119,20 @@ class AdbService : Service() {
         }
         return START_STICKY
       }
+      ACTION_NETWORK_CHANGED -> {
+        handleNetworkChange()
+        return START_STICKY
+      }
     }
 
     val ip = intent?.getStringExtra("ip") ?: "Unknown"
     val port = intent?.getIntExtra("port", 5555) ?: 5555
     val relayEnabled = intent?.getBooleanExtra("relay_enabled", false) ?: false
+
+    // Update current state
+    currentIp = ip
+    currentPort = port
+    currentRelayEnabled = relayEnabled
 
     val tailscaleIp = TailscaleHelper.getTailscaleIp()
     startForeground(NOTIFICATION_ID, createNotification(ip, port, tailscaleIp, relayEnabled))
@@ -133,7 +170,7 @@ class AdbService : Service() {
       try {
         relayServer?.start()
       } catch (e: Exception) {
-        // Log error
+        Log.e(TAG, "Failed to start relay server", e)
       }
     }
   }
@@ -143,6 +180,23 @@ class AdbService : Service() {
       putExtra(EXTRA_CLIENT_IP, clientIp)
     }
     LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+  }
+
+  private fun handleNetworkChange() {
+    serviceScope.launch {
+      val status = AdbManager.getStatus(this@AdbService)
+      if (status.enabled && status.ip != null) {
+        currentIp = status.ip
+        updateNotification()
+      }
+    }
+  }
+
+  private fun updateNotification() {
+    val tailscaleIp = TailscaleHelper.getTailscaleIp()
+    val notification = createNotification(currentIp, currentPort, tailscaleIp, currentRelayEnabled)
+    val notificationManager = getSystemService(NotificationManager::class.java)
+    notificationManager.notify(NOTIFICATION_ID, notification)
   }
 
   private fun updateNotificationWithActiveConnection() {
@@ -167,7 +221,10 @@ class AdbService : Service() {
 
   private fun createNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val channel = NotificationChannel(
+      val manager = getSystemService(NotificationManager::class.java)
+
+      // Main service channel
+      val serviceChannel = NotificationChannel(
         CHANNEL_ID,
         "ADB Service",
         NotificationManager.IMPORTANCE_LOW
@@ -175,9 +232,41 @@ class AdbService : Service() {
         description = "Shows when Wireless ADB is active"
         setShowBadge(false)
       }
-      val manager = getSystemService(NotificationManager::class.java)
-      manager.createNotificationChannel(channel)
+      manager.createNotificationChannel(serviceChannel)
+
+      // Health notification channel
+      val healthChannel = NotificationChannel(
+        HEALTH_CHANNEL_ID,
+        "Connection Health",
+        NotificationManager.IMPORTANCE_DEFAULT
+      ).apply {
+        description = "Alerts about ADB connection health issues"
+        setShowBadge(true)
+      }
+      manager.createNotificationChannel(healthChannel)
     }
+  }
+
+  fun showHealthDegradationAlert(healthStatus: String, details: String) {
+    val pendingIntent = PendingIntent.getActivity(
+      this,
+      0,
+      Intent(this, MainActivity::class.java),
+      PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val notification = NotificationCompat.Builder(this, HEALTH_CHANNEL_ID)
+      .setContentTitle("ADB Connection Health: $healthStatus")
+      .setContentText(details)
+      .setStyle(NotificationCompat.BigTextStyle().bigText(details))
+      .setSmallIcon(R.drawable.ic_notification)
+      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setAutoCancel(true)
+      .setContentIntent(pendingIntent)
+      .build()
+
+    val manager = getSystemService(NotificationManager::class.java)
+    manager.notify(HEALTH_NOTIFICATION_ID, notification)
   }
 
   private fun createNotification(
