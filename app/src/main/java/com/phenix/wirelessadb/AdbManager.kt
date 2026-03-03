@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit
 
 object AdbManager {
 
+  private const val TAG = "AdbManager"
   private const val DEFAULT_PORT = 5555
   private const val MIN_PORT = 1024
   private const val MAX_PORT = 65535
@@ -52,15 +53,30 @@ object AdbManager {
     if (!validatePort(port)) {
       return@withContext Result.failure(IllegalArgumentException("Port must be $MIN_PORT-$MAX_PORT"))
     }
-    runRootCommand(
+    val result = runRootCommand(
+      "setprop persist.adb.tcp.port $port",
       "setprop service.adb.tcp.port $port",
       "stop adbd",
       "start adbd"
     )
+    if (result.isSuccess) {
+      // Verify socket is actually listening
+      val verified = verifyAdbSocket(port)
+      if (!verified) {
+        Log.w(TAG, "enable: ADB socket not listening on port $port after enable, retrying...")
+        runRootCommand("stop adbd", "start adbd")
+        val retryOk = verifyAdbSocket(port)
+        if (!retryOk) {
+          Log.e(TAG, "enable: ADB socket still not listening after retry")
+        }
+      }
+    }
+    result
   }
 
   suspend fun disable(): Result<Unit> = withContext(Dispatchers.IO) {
     runRootCommand(
+      "setprop persist.adb.tcp.port -1",
       "setprop service.adb.tcp.port -1",
       "stop adbd",
       "start adbd"
@@ -90,22 +106,65 @@ object AdbManager {
 
   private fun getCurrentPort(): Int {
     return try {
-      val process = Runtime.getRuntime().exec(arrayOf("getprop", "service.adb.tcp.port"))
+      // Check ephemeral prop first, then persistent
+      val ephemeral = getSystemProp("service.adb.tcp.port")
+      if (ephemeral > 0) return ephemeral
+
+      val persistent = getSystemProp("persist.adb.tcp.port")
+      Log.d(TAG, "getCurrentPort: ephemeral=$ephemeral, persistent=$persistent")
+      persistent
+    } catch (e: Exception) {
+      Log.e(TAG, "getCurrentPort: ERROR ${e.message}")
+      -1
+    }
+  }
+
+  private fun getSystemProp(prop: String): Int {
+    return try {
+      val process = Runtime.getRuntime().exec(arrayOf("getprop", prop))
       val completed = process.waitFor(3, TimeUnit.SECONDS)
       if (!completed) {
         process.destroyForcibly()
-        Log.e("AdbManager", "getCurrentPort: TIMEOUT")
+        Log.e(TAG, "getSystemProp($prop): TIMEOUT")
         return -1
       }
       val result = process.inputStream.bufferedReader().use { reader ->
         reader.readLine()?.trim()?.toIntOrNull() ?: -1
       }
-      Log.d("AdbManager", "getCurrentPort: $result")
       result
     } catch (e: Exception) {
-      Log.e("AdbManager", "getCurrentPort: ERROR ${e.message}")
+      Log.e(TAG, "getSystemProp($prop): ERROR ${e.message}")
       -1
     }
+  }
+
+  /**
+   * Verify ADB is actually listening on the given TCP port.
+   * Polls up to 3 times with 500ms delay.
+   */
+  private fun verifyAdbSocket(port: Int, maxRetries: Int = 3): Boolean {
+    repeat(maxRetries) { attempt ->
+      try {
+        val process = Runtime.getRuntime().exec(
+          arrayOf("sh", "-c", "cat /proc/net/tcp6 /proc/net/tcp 2>/dev/null | grep -i ':${"%04X".format(port)}'")
+        )
+        val completed = process.waitFor(3, TimeUnit.SECONDS)
+        if (completed) {
+          val output = process.inputStream.bufferedReader().readText().trim()
+          if (output.isNotEmpty()) {
+            Log.d(TAG, "verifyAdbSocket: port $port listening (attempt ${attempt + 1})")
+            return true
+          }
+        } else {
+          process.destroyForcibly()
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "verifyAdbSocket: ERROR ${e.message}")
+      }
+      if (attempt < maxRetries - 1) Thread.sleep(500)
+    }
+    Log.w(TAG, "verifyAdbSocket: port $port NOT listening after $maxRetries attempts")
+    return false
   }
 
   /**
@@ -207,9 +266,11 @@ object AdbManager {
 
   private fun runRootCommand(vararg commands: String): Result<Unit> {
     return try {
+      Log.d(TAG, "runRootCommand: executing ${commands.size} commands")
       val process = Runtime.getRuntime().exec("su")
       DataOutputStream(process.outputStream).use { os ->
         commands.forEach { cmd ->
+          Log.d(TAG, "runRootCommand: $cmd")
           os.writeBytes("$cmd\n")
         }
         os.writeBytes("exit\n")
@@ -218,14 +279,20 @@ object AdbManager {
       val completed = process.waitFor(10, TimeUnit.SECONDS)
       if (!completed) {
         process.destroyForcibly()
+        Log.e(TAG, "runRootCommand: TIMEOUT after 10s")
         return Result.failure(RuntimeException("Root command timed out"))
       }
-      if (process.exitValue() == 0) {
-        Result.success(Unit)
+      val exitCode = process.exitValue()
+      if (exitCode != 0) {
+        val stderr = process.errorStream.bufferedReader().use { it.readText().trim() }
+        Log.e(TAG, "runRootCommand: exit=$exitCode, stderr=$stderr")
+        Result.failure(RuntimeException("Root command failed (exit $exitCode): $stderr"))
       } else {
-        Result.failure(RuntimeException("Root command failed with exit code ${process.exitValue()}"))
+        Log.d(TAG, "runRootCommand: SUCCESS")
+        Result.success(Unit)
       }
     } catch (e: Exception) {
+      Log.e(TAG, "runRootCommand: EXCEPTION ${e.message}")
       Result.failure(e)
     }
   }

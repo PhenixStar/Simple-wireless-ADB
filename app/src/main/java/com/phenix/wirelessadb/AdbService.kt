@@ -125,9 +125,21 @@ class AdbService : Service() {
       }
     }
 
-    val ip = intent?.getStringExtra("ip") ?: "Unknown"
+    val ip = intent?.getStringExtra("ip")
     val port = intent?.getIntExtra("port", 5555) ?: 5555
     val relayEnabled = intent?.getBooleanExtra("relay_enabled", false) ?: false
+
+    // If service restarted by system (no intent extras), re-verify ADB is enabled
+    if (ip == null) {
+      Log.i(TAG, "Service restarted by system, verifying ADB state...")
+      serviceScope.launch {
+        ensureAdbEnabled()
+      }
+      // Use last known state for notification
+      val tailscaleIp = TailscaleHelper.getTailscaleIp()
+      startForeground(NOTIFICATION_ID, createNotification(currentIp, currentPort, tailscaleIp, currentRelayEnabled))
+      return START_STICKY
+    }
 
     // Update current state
     currentIp = ip
@@ -180,6 +192,40 @@ class AdbService : Service() {
       putExtra(EXTRA_CLIENT_IP, clientIp)
     }
     LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+  }
+
+  /**
+   * Re-enable ADB if the service was restarted by the system and ADB is no longer active.
+   */
+  private suspend fun ensureAdbEnabled() {
+    try {
+      val status = AdbManager.getStatus(this@AdbService)
+      if (!status.enabled) {
+        val port = PrefsManager.getPort(this@AdbService)
+        Log.w(TAG, "ADB not enabled after service restart, re-enabling on port $port")
+        val result = AdbManager.enable(port)
+        if (result.isSuccess) {
+          Log.i(TAG, "ADB re-enabled successfully")
+          val newStatus = AdbManager.getStatus(this@AdbService)
+          if (newStatus.ip != null) {
+            currentIp = newStatus.ip
+            currentPort = newStatus.port
+            updateNotification()
+          }
+        } else {
+          Log.e(TAG, "Failed to re-enable ADB: ${result.exceptionOrNull()?.message}")
+        }
+      } else {
+        Log.d(TAG, "ADB still enabled on port ${status.port}, no action needed")
+        if (status.ip != null) {
+          currentIp = status.ip
+          currentPort = status.port
+          updateNotification()
+        }
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "ensureAdbEnabled failed", e)
+    }
   }
 
   private fun handleNetworkChange() {
