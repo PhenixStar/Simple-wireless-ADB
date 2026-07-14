@@ -76,6 +76,14 @@ android {
     buildConfig = true
     aidl = true
   }
+
+  testOptions {
+    unitTests {
+      // Let non-Robolectric unit tests call android.util.Log etc. without
+      // "Method not mocked" crashes
+      isReturnDefaultValues = true
+    }
+  }
 }
 
 dependencies {
@@ -90,6 +98,9 @@ dependencies {
 
   // JSON for trusted device storage
   implementation("com.google.code.gson:gson:2.10.1")
+
+  // Encrypted storage for SSH credentials
+  implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
   // Coroutines
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -131,6 +142,9 @@ dependencies {
 
   // Testing
   testImplementation("junit:junit:4.13.2")
+  // Desktop Conscrypt so Robolectric can load a JVM-compatible provider
+  // (conscrypt-android's JNI cannot load on the host JVM)
+  testImplementation("org.conscrypt:conscrypt-openjdk-uber:2.6.1")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
   testImplementation("io.mockk:mockk:1.13.9")
   testImplementation("org.robolectric:robolectric:4.11.1")

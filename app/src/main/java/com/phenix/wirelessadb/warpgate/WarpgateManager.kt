@@ -1,10 +1,12 @@
 package com.phenix.wirelessadb.warpgate
 
+import android.content.Context
 import android.util.Log
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Properties
 
 /**
@@ -24,6 +26,7 @@ object WarpgateManager {
   private const val TAG = "WarpgateManager"
   private const val CONNECT_TIMEOUT_MS = 15000
   private const val SESSION_TIMEOUT_MS = 0 // No timeout for session
+  private const val KNOWN_HOSTS_FILE = "warpgate_known_hosts"
 
   private var sshSession: Session? = null
   private var currentConfig: WarpgateConfig? = null
@@ -40,7 +43,7 @@ object WarpgateManager {
    * @param config Warpgate configuration
    * @return Result indicating success or failure
    */
-  suspend fun connect(config: WarpgateConfig): Result<Unit> = withContext(Dispatchers.IO) {
+  suspend fun connect(context: Context, config: WarpgateConfig): Result<Unit> = withContext(Dispatchers.IO) {
     if (!config.isValid()) {
       return@withContext Result.failure(Exception("Invalid Warpgate configuration"))
     }
@@ -52,6 +55,13 @@ object WarpgateManager {
       Log.i(TAG, "Connecting to Warpgate: ${config.host}:${config.port}")
 
       val jsch = JSch()
+
+      // Trust-on-first-use host key verification: remember the bastion's key
+      // on first connect, reject if it changes later (MITM protection)
+      val knownHosts = File(context.filesDir, KNOWN_HOSTS_FILE)
+      if (!knownHosts.exists()) knownHosts.createNewFile()
+      jsch.setKnownHosts(knownHosts.absolutePath)
+
       val session = jsch.getSession(
         config.getFullUsername(),
         config.host,
@@ -65,7 +75,7 @@ object WarpgateManager {
 
       // Configure SSH session
       val sshConfig = Properties().apply {
-        put("StrictHostKeyChecking", "no")
+        put("StrictHostKeyChecking", "accept-new")
         put("PreferredAuthentications", "password,publickey,keyboard-interactive")
       }
       session.setConfig(sshConfig)

@@ -275,7 +275,7 @@ class AdbViewModel(application: Application) : AndroidViewModel(application) {
       _error.value = null
 
       val config = PrefsManager.getWarpgateConfig(context)
-      val result = WarpgateManager.connect(config)
+      val result = WarpgateManager.connect(context, config)
 
       result.onSuccess {
         _warpgateConnected.value = true

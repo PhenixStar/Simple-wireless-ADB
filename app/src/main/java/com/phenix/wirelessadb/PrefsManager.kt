@@ -2,6 +2,9 @@ package com.phenix.wirelessadb
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
 import com.phenix.wirelessadb.model.ConnectionMode
 import com.phenix.wirelessadb.model.ConnectionStatistics
@@ -60,8 +63,60 @@ object PrefsManager {
   private const val KEY_TRUSTED_NETWORKS = "trusted_networks"
 
 
+  private const val SECURE_PREFS_NAME = "wireless_adb_secure_prefs"
+
+  @Volatile
+  private var securePrefs: SharedPreferences? = null
+
   private fun getPrefs(context: Context): SharedPreferences {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+  }
+
+  /**
+   * Keystore-backed prefs for secrets (SSH passwords). Falls back to the
+   * regular prefs file on devices with a broken Android Keystore so the
+   * feature keeps working, at the cost of encryption at rest.
+   */
+  private fun getSecurePrefs(context: Context): SharedPreferences {
+    securePrefs?.let { return it }
+    synchronized(this) {
+      securePrefs?.let { return it }
+      return try {
+        val masterKey = MasterKey.Builder(context.applicationContext)
+          .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+          .build()
+        val prefs = EncryptedSharedPreferences.create(
+          context.applicationContext,
+          SECURE_PREFS_NAME,
+          masterKey,
+          EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+          EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        securePrefs = prefs
+        prefs
+      } catch (e: Exception) {
+        // Keystore unavailable (some OEM builds, host-JVM tests): fall back
+        // to plain prefs. Not cached, so a later call can recover.
+        Log.w("PrefsManager", "EncryptedSharedPreferences unavailable, falling back: ${e.message}")
+        getPrefs(context)
+      }
+    }
+  }
+
+  /**
+   * Read the Warpgate password from encrypted storage, migrating any value
+   * previously stored in plaintext prefs.
+   */
+  private fun getWarpgatePassword(context: Context): String {
+    val plain = getPrefs(context)
+    val secure = getSecurePrefs(context)
+    val legacy = plain.getString(KEY_WARPGATE_PASSWORD, null)
+    if (legacy != null && plain !== secure) {
+      secure.edit().putString(KEY_WARPGATE_PASSWORD, legacy).apply()
+      plain.edit().remove(KEY_WARPGATE_PASSWORD).apply()
+      return legacy
+    }
+    return secure.getString(KEY_WARPGATE_PASSWORD, "") ?: ""
   }
 
   fun isEnableOnBoot(context: Context): Boolean {
@@ -127,7 +182,7 @@ object PrefsManager {
       host = prefs.getString(KEY_WARPGATE_HOST, "") ?: "",
       port = prefs.getInt(KEY_WARPGATE_PORT, WarpgateConfig.DEFAULT_PORT),
       username = prefs.getString(KEY_WARPGATE_USERNAME, "") ?: "",
-      password = prefs.getString(KEY_WARPGATE_PASSWORD, "") ?: "",
+      password = getWarpgatePassword(context),
       targetName = prefs.getString(KEY_WARPGATE_TARGET, "adb") ?: "adb",
       localPort = prefs.getInt(KEY_WARPGATE_LOCAL_PORT, WarpgateConfig.DEFAULT_LOCAL_PORT)
     )
@@ -139,11 +194,13 @@ object PrefsManager {
       putString(KEY_WARPGATE_HOST, config.host)
       putInt(KEY_WARPGATE_PORT, config.port)
       putString(KEY_WARPGATE_USERNAME, config.username)
-      putString(KEY_WARPGATE_PASSWORD, config.password)
+      // Password lives in encrypted prefs only; drop any legacy plaintext copy
+      remove(KEY_WARPGATE_PASSWORD)
       putString(KEY_WARPGATE_TARGET, config.targetName)
       putInt(KEY_WARPGATE_LOCAL_PORT, config.localPort)
       apply()
     }
+    getSecurePrefs(context).edit().putString(KEY_WARPGATE_PASSWORD, config.password).apply()
   }
 
   fun setWarpgateEnabled(context: Context, enabled: Boolean) {
