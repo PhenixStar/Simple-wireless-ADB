@@ -2,7 +2,7 @@
 
 All notable changes to RootADB Pro will be documented in this file.
 
-## [Unreleased]
+## [1.3.0] - 2026-07-15
 
 ### Security
 - Warpgate SSH password is now stored in `EncryptedSharedPreferences`
