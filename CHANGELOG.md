@@ -4,6 +4,18 @@ All notable changes to RootADB Pro will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Target and compile SDK raised from 34 to 35 (Android 15); Android 15's
+  enforced edge-to-edge is handled by the explicit inset listeners added in
+  this release
+
+### Added
+- Accent color selection now actually themes the app: each accent applies a
+  Material 3 tonal overlay (light + dark palettes) at activity creation
+- "Dynamic" accent option using Material You wallpaper colors (Android 12+)
+- Adaptive launcher icon with monochrome layer for Android 13+ themed icons
+- Predictive back gesture opt-in (Android 13+)
+
 ### Security
 - Warpgate SSH password is now stored in `EncryptedSharedPreferences`
   (Android Keystore) instead of plaintext prefs; existing stored passwords
@@ -14,6 +26,18 @@ All notable changes to RootADB Pro will be documented in this file.
 - Persistent P2P token lookup now uses constant-time comparison
 
 ### Fixed
+- Android 12+ light mode no longer renders a near-black background: removed
+  the broken `values-v31` dynamic-color theme that hardcoded
+  `system_neutral1_900` into a DayNight theme
+- Edge-to-edge insets are now handled explicitly (status bar padding on the
+  app bar, navigation-bar padding on scrolling content) instead of relying on
+  `fitsSystemWindows`, surviving Android 15's enforced edge-to-edge and
+  display cutouts
+- Fragment content no longer rests hidden behind the gesture navigation bar
+- Android 8.0 (API 26): navigation bar now uses a translucent scrim since the
+  platform cannot render dark nav-bar icons, keeping buttons visible on light
+  content
+- Orange accent uses a dark on-primary color for WCAG-compliant contrast
 - Legacy (v1.0) trusted-device records no longer deserialize with a null
   device ID (Gson bypasses Kotlin null-safety); records are now routed by
   JSON shape and old entries parse correctly instead of crashing on access

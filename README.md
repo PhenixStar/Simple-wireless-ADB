@@ -53,6 +53,8 @@ A powerful Android utility that enables wireless ADB debugging with multiple rem
 ### Theme Customization
 - Light / Dark / System modes
 - 6 accent colors: Blue, Teal, Purple, Orange, Pink, Green
+- Dynamic (Material You) wallpaper colors on Android 12+
+- Adaptive + themed launcher icon (Android 13+ monochrome)
 - Material 3 design language
 
 ## Requirements
@@ -214,7 +216,7 @@ app/src/main/java/com/phenix/wirelessadb/
 
 ### v1.2.0 (Current)
 - **Dashboard Tab** - Unified control center
-- **Theme System** - Light/Dark modes + 6 accent colors
+- **Theme System** - Light/Dark modes + 6 accent colors + Material You dynamic color (Android 12+)
 - **P2P Token** - Device-to-device connections
 - **ADB Auto-Pairing** - Android 11+ wireless pairing
 - **Shizuku Enhancement** - Proper UserService integration
