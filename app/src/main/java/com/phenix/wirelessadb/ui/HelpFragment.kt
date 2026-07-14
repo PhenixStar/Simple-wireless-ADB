@@ -105,7 +105,7 @@ class HelpFragment : Fragment() {
 
   private fun setupAccentColorButtons() {
     binding.apply {
-      val accentButtons = listOf(
+      val accentButtons = mutableListOf(
         accentBlue to AccentColor.BLUE,
         accentTeal to AccentColor.TEAL,
         accentPurple to AccentColor.PURPLE,
@@ -114,19 +114,28 @@ class HelpFragment : Fragment() {
         accentGreen to AccentColor.GREEN
       )
 
+      // Material You option only exists where the system provides dynamic color
+      if (ThemeManager.isDynamicColorAvailable()) {
+        accentDynamic.visibility = View.VISIBLE
+        accentDynamic.backgroundTintList = ContextCompat.getColorStateList(
+          requireContext(), android.R.color.system_accent1_500
+        )
+        accentButtons.add(accentDynamic to AccentColor.DYNAMIC)
+      }
+
       // Set up click handlers and initial selection indicator
       val currentAccent = ThemeManager.getAccentColor(requireContext())
 
       accentButtons.forEach { (button, color) ->
         // Add check icon to currently selected color
-        updateAccentButtonSelection(button, color == currentAccent)
+        updateAccentButtonSelection(button, color, color == currentAccent)
 
         button.setOnClickListener {
           ThemeManager.setAccentColor(requireContext(), color)
 
           // Update selection indicators
           accentButtons.forEach { (btn, clr) ->
-            updateAccentButtonSelection(btn, clr == color)
+            updateAccentButtonSelection(btn, clr, clr == color)
           }
 
           // Recreate activity to apply new accent color immediately
@@ -136,11 +145,15 @@ class HelpFragment : Fragment() {
     }
   }
 
-  private fun updateAccentButtonSelection(button: MaterialButton, isSelected: Boolean) {
+  private fun updateAccentButtonSelection(
+    button: MaterialButton,
+    accent: AccentColor,
+    isSelected: Boolean
+  ) {
     if (isSelected) {
       button.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check)
       button.iconSize = resources.getDimensionPixelSize(R.dimen.accent_check_size)
-      button.iconTint = ContextCompat.getColorStateList(requireContext(), R.color.accent_on_primary)
+      button.iconTint = ContextCompat.getColorStateList(requireContext(), accent.onPrimary)
     } else {
       button.icon = null
       button.iconSize = 0

@@ -193,6 +193,7 @@
   <string name="accent_orange">Orange</string>
   <string name="accent_pink">Pink</string>
   <string name="accent_green">Green</string>
+  <string name="accent_dynamic">Dynamic (Material You wallpaper colors)</string>
 
   <!-- ADB Pairing (v1.2.0 Phase 6) -->
   <string name="pairing_title">ADB Pairing</string>

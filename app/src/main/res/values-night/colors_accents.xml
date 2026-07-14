@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Accent tonal palettes (dark mode): lighter primaries, dark containers. -->
+
+  <!-- Blue -->
+  <color name="accent_blue_primary">#A6C8FF</color>
+  <color name="accent_blue_variant">#84AFFF</color>
+  <color name="accent_blue_on_primary">#003060</color>
+  <color name="accent_blue_container">#0E4A8E</color>
+  <color name="accent_blue_on_container">#D5E3FF</color>
+
+  <!-- Teal (Default) -->
+  <color name="accent_teal_primary">#7ED9CB</color>
+  <color name="accent_teal_variant">#5EC2B3</color>
+  <color name="accent_teal_on_primary">#003731</color>
+  <color name="accent_teal_container">#00504A</color>
+  <color name="accent_teal_on_container">#9CF2E2</color>
+
+  <!-- Purple -->
+  <color name="accent_purple_primary">#E5B3FF</color>
+  <color name="accent_purple_variant">#D897FF</color>
+  <color name="accent_purple_on_primary">#470076</color>
+  <color name="accent_purple_container">#641E8C</color>
+  <color name="accent_purple_on_container">#F5D9FF</color>
+
+  <!-- Orange -->
+  <color name="accent_orange_primary">#FFB77C</color>
+  <color name="accent_orange_variant">#FFA05C</color>
+  <color name="accent_orange_on_primary">#4D2600</color>
+  <color name="accent_orange_container">#6D3800</color>
+  <color name="accent_orange_on_container">#FFDCC2</color>
+
+  <!-- Pink -->
+  <color name="accent_pink_primary">#FFB1C4</color>
+  <color name="accent_pink_variant">#FF8FAC</color>
+  <color name="accent_pink_on_primary">#66002B</color>
+  <color name="accent_pink_container">#8F0A45</color>
+  <color name="accent_pink_on_container">#FFD9E1</color>
+
+  <!-- Green -->
+  <color name="accent_green_primary">#9BD693</color>
+  <color name="accent_green_variant">#7FC178</color>
+  <color name="accent_green_on_primary">#0A3910</color>
+  <color name="accent_green_container">#205426</color>
+  <color name="accent_green_on_container">#B6F2AF</color>
+</resources>
