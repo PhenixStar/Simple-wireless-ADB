@@ -31,23 +31,6 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/rootadb-release.keystore
 
-      - name: Verify Keystore (metadata only)
-        run: |
-          # Prints only file type/size and whether the credentials open the
-          # store - never secret values. Helps diagnose bad secret uploads.
-          file app/rootadb-release.keystore
-          wc -c < app/rootadb-release.keystore
-          if keytool -list -keystore app/rootadb-release.keystore \
-               -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
-               -alias "${{ secrets.KEY_ALIAS }}" > /dev/null 2>&1; then
-            echo "KEYSTORE_CHECK: store opens and alias found"
-          else
-            keytool -list -keystore app/rootadb-release.keystore \
-              -storepass "${{ secrets.KEYSTORE_PASSWORD }}" > /dev/null 2>&1 \
-              && echo "KEYSTORE_CHECK: store opens but alias NOT found" \
-              || echo "KEYSTORE_CHECK: store does NOT open (bad blob or wrong store password)"
-          fi
-
       - name: Build Release APK
         run: |
           ./gradlew assembleRelease \
