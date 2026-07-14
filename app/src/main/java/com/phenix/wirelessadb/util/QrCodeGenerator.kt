@@ -129,7 +129,8 @@ object QrCodeGenerator {
       canvas.drawRoundRect(bgRect, 8f, 8f, paint)
 
       // Draw logo with rounded corners
-      val roundedLogo = Bitmap.createBitmap(logoSize, logoSize, logo.config)
+      // getConfig() is nullable (hardware bitmaps have no config); ARGB_8888 is the safe default
+      val roundedLogo = Bitmap.createBitmap(logoSize, logoSize, logo.config ?: Bitmap.Config.ARGB_8888)
       val canvas2 = Canvas(roundedLogo)
       val paint2 = Paint().apply {
         isAntiAlias = true
