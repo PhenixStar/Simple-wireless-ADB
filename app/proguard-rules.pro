@@ -30,3 +30,10 @@
 
 # Kotlinx serialization
 -dontwarn kotlinx.serialization.**
+
+# Tink (via androidx.security:security-crypto) references compile-only annotations
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.concurrent.GuardedBy
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn com.google.api.client.**
+-dontwarn org.joda.time.**
