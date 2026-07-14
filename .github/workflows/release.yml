@@ -34,10 +34,10 @@ jobs:
       - name: Build Release APK
         run: |
           ./gradlew assembleRelease \
-            -PKEYSTORE_FILE=rootadb-release.keystore \
-            -PKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }} \
-            -PKEY_ALIAS=${{ secrets.KEY_ALIAS }} \
-            -PKEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
+            -PciKeystoreFile=rootadb-release.keystore \
+            -PciKeystorePassword=${{ secrets.KEYSTORE_PASSWORD }} \
+            -PciKeyAlias=${{ secrets.KEY_ALIAS }} \
+            -PciKeyPassword=${{ secrets.KEY_PASSWORD }} \
             --no-daemon
 
       - name: Get Version Name
