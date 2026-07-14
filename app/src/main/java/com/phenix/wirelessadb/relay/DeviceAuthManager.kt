@@ -2,9 +2,11 @@ package com.phenix.wirelessadb.relay
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.phenix.wirelessadb.model.AuthMethod
 import com.phenix.wirelessadb.model.DeviceIdentifier
 import com.phenix.wirelessadb.model.TrustedDevice
+import java.security.MessageDigest
 
 /**
  * Manages trusted devices for the ADB relay server (v1.2.0).
@@ -59,17 +61,29 @@ class DeviceAuthManager(context: Context) {
 
   /**
    * Find a trusted device by persistent token.
+   * Uses constant-time comparison so token lookup timing does not leak
+   * how many leading characters of a guessed token were correct.
    */
   fun findDeviceByToken(token: String): TrustedDevice? {
-    return getTrustedDevices().find { it.persistentToken == token }
+    val tokenBytes = token.toByteArray()
+    return getTrustedDevices().find { device ->
+      val stored = device.persistentToken ?: return@find false
+      MessageDigest.isEqual(stored.toByteArray(), tokenBytes)
+    }
   }
 
   /**
    * Add a device to the trusted list (legacy IP-only method).
+   * Re-approving an already-trusted IP updates the existing entry instead
+   * of creating a duplicate.
    */
   fun addTrustedDevice(clientIp: String, name: String? = null) {
-    val device = TrustedDevice.fromIpOnly(clientIp, name)
-    saveDevice(device)
+    val existing = findDeviceByIp(clientIp)
+    if (existing != null) {
+      updateDevice(existing.copy(name = name ?: existing.name, lastSeen = System.currentTimeMillis()))
+      return
+    }
+    saveDevice(TrustedDevice.fromIpOnly(clientIp, name))
   }
 
   /**
@@ -134,26 +148,36 @@ class DeviceAuthManager(context: Context) {
   fun getTrustedDevices(): List<TrustedDevice> {
     return prefs.all.mapNotNull { (key, value) ->
       try {
-        val json = value as String
-        // Try parsing as enhanced device first
-        try {
-          gson.fromJson(json, TrustedDevice::class.java)
-        } catch (e: Exception) {
-          // Fallback: try parsing as legacy device
-          val legacy = gson.fromJson(json, LegacyTrustedDevice::class.java)
-          TrustedDevice(
-            id = key, // Use the IP as ID for legacy devices
-            ip = legacy.ip,
-            name = legacy.name,
-            addedAt = legacy.addedAt,
-            lastSeen = legacy.lastSeen,
-            authMethod = AuthMethod.IP_ADDRESS
-          )
-        }
+        parseDevice(key, value as String)
       } catch (e: Exception) {
         null
       }
     }.sortedByDescending { it.lastSeen }
+  }
+
+  /**
+   * Parse a stored device entry, routing by JSON shape.
+   *
+   * Gson populates data classes reflectively and never fails on a missing
+   * field, so parsing a legacy record as [TrustedDevice] would silently
+   * produce a null `id` despite the non-null Kotlin type. Route by the
+   * presence of the `id` field instead of relying on parse exceptions.
+   */
+  private fun parseDevice(key: String, json: String): TrustedDevice? {
+    val obj = JsonParser.parseString(json).asJsonObject
+    return if (obj.has("id") && !obj.get("id").isJsonNull) {
+      gson.fromJson(obj, TrustedDevice::class.java)
+    } else {
+      val legacy = gson.fromJson(obj, LegacyTrustedDevice::class.java)
+      TrustedDevice(
+        id = key, // Legacy records were keyed by IP; reuse it as the ID
+        ip = legacy.ip,
+        name = legacy.name,
+        addedAt = legacy.addedAt,
+        lastSeen = legacy.lastSeen,
+        authMethod = AuthMethod.IP_ADDRESS
+      )
+    }
   }
 
   /**

@@ -405,4 +405,65 @@ class DeviceAuthManagerTest {
     assertTrue(storage.isEmpty())
     assertEquals(0, deviceAuthManager.getTrustedDeviceCount())
   }
+
+  // ============================================================
+  // Legacy record parsing tests
+  // ============================================================
+
+  @Test
+  fun `legacy v1 record without id parses with key as id`() {
+    // v1.0 stored devices keyed by IP, with no id field in the JSON
+    storage["10.0.0.5"] =
+      """{"ip":"10.0.0.5","name":"Old Laptop","addedAt":1000,"lastSeen":2000}"""
+
+    val devices = deviceAuthManager.getTrustedDevices()
+
+    assertEquals(1, devices.size)
+    val device = devices[0]
+    assertEquals("10.0.0.5", device.id)
+    assertEquals("10.0.0.5", device.ip)
+    assertEquals("Old Laptop", device.name)
+    assertEquals(1000L, device.addedAt)
+    assertEquals(2000L, device.lastSeen)
+    assertEquals(AuthMethod.IP_ADDRESS, device.authMethod)
+  }
+
+  @Test
+  fun `legacy record can be removed without null id crash`() {
+    storage["10.0.0.5"] =
+      """{"ip":"10.0.0.5","name":null,"addedAt":1000,"lastSeen":2000}"""
+
+    deviceAuthManager.removeTrustedDevice("10.0.0.5")
+
+    assertTrue(storage.isEmpty())
+  }
+
+  @Test
+  fun `corrupt record is skipped without crashing`() {
+    storage["bad-entry"] = "not valid json {"
+    deviceAuthManager.addTrustedDevice("192.168.1.100")
+
+    val devices = deviceAuthManager.getTrustedDevices()
+
+    assertEquals(1, devices.size)
+    assertEquals("192.168.1.100", devices[0].ip)
+  }
+
+  // ============================================================
+  // findDeviceByToken() tests
+  // ============================================================
+
+  @Test
+  fun `findDeviceByToken matches exact token only`() {
+    val device = TrustedDevice.fromIpOnly("192.168.1.100").copy(
+      persistentToken = "SECRET-TOKEN-123",
+      authMethod = AuthMethod.TOKEN_PERSISTENT
+    )
+    deviceAuthManager.addTrustedDevice(device)
+
+    assertNotNull(deviceAuthManager.findDeviceByToken("SECRET-TOKEN-123"))
+    assertNull(deviceAuthManager.findDeviceByToken("SECRET-TOKEN-124"))
+    assertNull(deviceAuthManager.findDeviceByToken("SECRET-TOKEN"))
+    assertNull(deviceAuthManager.findDeviceByToken(""))
+  }
 }

@@ -7,6 +7,7 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
 import java.net.InetSocketAddress
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * ADB Relay Server that bridges remote Tailscale connections to local ADB.
@@ -26,8 +27,9 @@ class AdbRelayServer(
   private var serverJob: Job? = null
   private var serverSocket: ServerSocket? = null
   private var selectorManager: SelectorManager? = null
-  private val pendingConnections = mutableMapOf<String, Socket>()
-  private val activeConnections = mutableSetOf<String>()
+  // Mutated from concurrent connection-handler coroutines and UI callbacks
+  private val pendingConnections = ConcurrentHashMap<String, Socket>()
+  private val activeConnections: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
   val isRunning: Boolean
     get() = serverJob?.isActive == true
@@ -159,10 +161,13 @@ class AdbRelayServer(
 
   /**
    * Wait for device approval with timeout.
+   * Returns early when the device is denied (removed from pending) instead
+   * of holding the connection open for the full timeout.
    */
   private suspend fun waitForApproval(clientIp: String): Boolean {
     return withTimeoutOrNull(APPROVAL_TIMEOUT_MS) {
       while (!authManager.isDeviceTrusted(clientIp)) {
+        if (!pendingConnections.containsKey(clientIp)) return@withTimeoutOrNull false
         delay(500)
       }
       true
