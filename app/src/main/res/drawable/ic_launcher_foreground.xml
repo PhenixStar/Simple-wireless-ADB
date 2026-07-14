@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon foreground: white ADB ring + plus glyph, centered in the 66dp safe zone.
+     Also used as the monochrome layer for Android 13+ themed icons. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
   android:width="108dp"
   android:height="108dp"
@@ -6,9 +8,6 @@
   android:viewportHeight="108">
 
   <group android:translateX="22" android:translateY="22">
-    <path
-      android:fillColor="#6200EE"
-      android:pathData="M32,0C14.327,0,0,14.327,0,32s14.327,32,32,32s32,-14.327,32,-32S49.673,0,32,0z" />
     <path
       android:fillColor="#FFFFFF"
       android:pathData="M32,12c-11.046,0,-20,8.954,-20,20s8.954,20,20,20s20,-8.954,20,-20S43.046,12,32,12z M32,16c8.837,0,16,7.163,16,16s-7.163,16,-16,16s-16,-7.163,-16,-16S23.163,16,32,16z" />
