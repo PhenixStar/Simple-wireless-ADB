@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.phenix.wirelessadb.R
 import com.phenix.wirelessadb.databinding.FragmentStatisticsBinding
 import com.phenix.wirelessadb.viewmodel.StatisticsViewModel
+import com.phenix.wirelessadb.util.applyBottomSystemBarInsets
 
 /**
  * TAB 3: STATISTICS (v1.3.0)
@@ -39,6 +40,8 @@ class StatisticsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    // Edge-to-edge: keep scrollable content clear of the gesture/navigation bar
+    view.applyBottomSystemBarInsets()
     setupViews()
     observeViewModel()
   }

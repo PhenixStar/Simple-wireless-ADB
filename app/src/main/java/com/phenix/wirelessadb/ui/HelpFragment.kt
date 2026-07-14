@@ -16,6 +16,7 @@ import com.phenix.wirelessadb.databinding.FragmentHelpBinding
 import com.phenix.wirelessadb.theme.AccentColor
 import com.phenix.wirelessadb.theme.ThemeManager
 import com.phenix.wirelessadb.theme.ThemeMode
+import com.phenix.wirelessadb.util.applyBottomSystemBarInsets
 
 class HelpFragment : Fragment() {
 
@@ -33,6 +34,8 @@ class HelpFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    // Edge-to-edge: keep scrollable content clear of the gesture/navigation bar
+    view.applyBottomSystemBarInsets()
     setupViews()
   }
 

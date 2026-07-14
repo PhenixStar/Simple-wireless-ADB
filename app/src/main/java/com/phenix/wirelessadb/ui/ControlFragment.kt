@@ -24,6 +24,7 @@ import com.phenix.wirelessadb.util.AccessibilityHelper.setStateDescription
 import com.phenix.wirelessadb.relay.TailscaleHelper
 import com.phenix.wirelessadb.viewmodel.AdbViewModel
 import com.phenix.wirelessadb.warpgate.WarpgateConfig
+import com.phenix.wirelessadb.util.applyBottomSystemBarInsets
 
 /**
  * TAB 1: CONTROL (v1.3.0 - Mode-Based UI)
@@ -74,6 +75,8 @@ class ControlFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    // Edge-to-edge: keep scrollable content clear of the gesture/navigation bar
+    view.applyBottomSystemBarInsets()
     setupViews()
     observeViewModel()
   }
