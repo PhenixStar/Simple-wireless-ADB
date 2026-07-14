@@ -34,6 +34,10 @@ class BootReceiverTest {
     context = RuntimeEnvironment.getApplication()
     bootReceiver = BootReceiver()
 
+    // Skip real boot/retry delays so tests observe the enable call promptly
+    BootReceiver.bootDelayMs = 0L
+    BootReceiver.retryDelayMs = 0L
+
     // Mock PrefsManager
     mockkObject(PrefsManager)
 
@@ -44,6 +48,8 @@ class BootReceiverTest {
 
   @After
   fun teardown() {
+    BootReceiver.bootDelayMs = 5000L
+    BootReceiver.retryDelayMs = 3000L
     unmockkAll()
   }
 

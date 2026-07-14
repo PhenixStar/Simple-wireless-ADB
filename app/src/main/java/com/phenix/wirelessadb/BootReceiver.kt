@@ -13,9 +13,11 @@ class BootReceiver : BroadcastReceiver() {
 
   companion object {
     private const val TAG = "BootReceiver"
-    private const val BOOT_DELAY_MS = 5000L
     private const val MAX_RETRIES = 3
-    private const val RETRY_DELAY_MS = 3000L
+
+    // Overridable so tests don't have to wait out real boot/retry delays
+    internal var bootDelayMs = 5000L
+    internal var retryDelayMs = 3000L
   }
 
   override fun onReceive(context: Context, intent: Intent) {
@@ -30,14 +32,14 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     val port = PrefsManager.getPort(context)
-    Log.i(TAG, "Boot completed, enabling ADB on port $port after ${BOOT_DELAY_MS}ms delay")
+    Log.i(TAG, "Boot completed, enabling ADB on port $port after ${bootDelayMs}ms delay")
 
     val pendingResult = goAsync()
 
     CoroutineScope(Dispatchers.IO).launch {
       try {
         // Wait for system services to stabilize after boot
-        delay(BOOT_DELAY_MS)
+        delay(bootDelayMs)
 
         var lastError: Throwable? = null
         for (attempt in 1..MAX_RETRIES) {
@@ -57,7 +59,7 @@ class BootReceiver : BroadcastReceiver() {
           }
           lastError = result.exceptionOrNull()
           Log.w(TAG, "ADB enable attempt $attempt/$MAX_RETRIES failed: ${lastError?.message}")
-          if (attempt < MAX_RETRIES) delay(RETRY_DELAY_MS)
+          if (attempt < MAX_RETRIES) delay(retryDelayMs)
         }
         Log.e(TAG, "All $MAX_RETRIES attempts to enable ADB failed", lastError)
       } catch (e: Exception) {

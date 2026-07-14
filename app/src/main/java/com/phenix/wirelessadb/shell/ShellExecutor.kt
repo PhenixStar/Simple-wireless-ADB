@@ -57,6 +57,11 @@ object ShellExecutor {
    * @return Result with stdout on success, error on failure
    */
   suspend fun execute(vararg commands: String): Result<String> = withContext(Dispatchers.IO) {
+    if (commands.isEmpty() || commands.all { it.isBlank() }) {
+      return@withContext Result.failure(
+        IllegalArgumentException("Commands cannot be empty")
+      )
+    }
     val cmd = commands.joinToString(" && ")
     Log.d(TAG, "Executing via $backend: $cmd")
 

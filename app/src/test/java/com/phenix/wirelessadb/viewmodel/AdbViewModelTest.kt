@@ -85,7 +85,7 @@ class AdbViewModelTest {
     every { WarpgateManager.isConnected } returns false
     every { WarpgateManager.disconnect() } just Runs
     every { WarpgateManager.getAdbCommand() } returns null
-    coEvery { WarpgateManager.connect(any()) } returns Result.success(Unit)
+    coEvery { WarpgateManager.connect(any(), any()) } returns Result.success(Unit)
 
     // Mock ShellExecutor
     mockkObject(ShellExecutor)
