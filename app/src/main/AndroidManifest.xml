@@ -10,6 +10,11 @@
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <uses-permission android:name="android.permission.CAMERA" />
 
+  <!-- Camera is only used for QR pairing; don't exclude camera-less devices -->
+  <uses-feature
+    android:name="android.hardware.camera"
+    android:required="false" />
+
   <queries>
     <intent>
       <action android:name="android.intent.action.SENDTO" />

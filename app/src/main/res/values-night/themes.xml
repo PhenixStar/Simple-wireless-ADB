@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!-- Main App Theme - Material 3 Dark -->
-  <style name="Theme.WirelessADB" parent="Theme.Material3.Dark.NoActionBar">
+  <style name="Theme.WirelessADB" parent="Theme.Material3.Dark.NoActionBar" tools:targetApi="27">
     <!-- Primary Colors -->
     <item name="colorPrimary">@color/md_theme_dark_primary</item>
     <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>

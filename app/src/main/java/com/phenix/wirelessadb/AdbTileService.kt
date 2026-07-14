@@ -1,7 +1,9 @@
 package com.phenix.wirelessadb
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.drawable.Icon
+import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
@@ -95,7 +97,16 @@ class AdbTileService : TileService() {
     val intent = Intent(this, MainActivity::class.java).apply {
       flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
-    startActivityAndCollapse(intent)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      // The Intent overload throws UnsupportedOperationException on Android 14+
+      val pendingIntent = PendingIntent.getActivity(
+        this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+      )
+      startActivityAndCollapse(pendingIntent)
+    } else {
+      @Suppress("DEPRECATION", "StartActivityAndCollapseDeprecated")
+      startActivityAndCollapse(intent)
+    }
     Log.d(TAG, "Opening MainActivity from tile")
   }
 
@@ -123,12 +134,14 @@ class AdbTileService : TileService() {
           // Set label
           label = "Wireless ADB"
 
-          // Set subtitle with connection info
-          subtitle = if (status.enabled) {
-            val ip = status.ip ?: "No WiFi"
-            "On - $ip:${status.port}"
-          } else {
-            getString(R.string.tile_subtitle_inactive)
+          // Set subtitle with connection info (API 29+)
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            subtitle = if (status.enabled) {
+              val ip = status.ip ?: "No WiFi"
+              "On - $ip:${status.port}"
+            } else {
+              getString(R.string.tile_subtitle_inactive)
+            }
           }
 
           // Update the tile UI
@@ -141,7 +154,9 @@ class AdbTileService : TileService() {
           state = Tile.STATE_INACTIVE
           icon = Icon.createWithResource(this@AdbTileService, R.drawable.ic_tile_adb_inactive)
           label = "Wireless ADB"
-          subtitle = "Error"
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            subtitle = "Error"
+          }
           updateTile()
         }
       }
