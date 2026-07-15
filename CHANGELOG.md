@@ -16,15 +16,6 @@ All notable changes to RootADB Pro will be documented in this file.
 - Adaptive launcher icon with monochrome layer for Android 13+ themed icons
 - Predictive back gesture opt-in (Android 13+)
 
-### Security
-- Warpgate SSH password is now stored in `EncryptedSharedPreferences`
-  (Android Keystore) instead of plaintext prefs; existing stored passwords
-  migrate automatically on first read
-- SSH host key verification for Warpgate tunnels changed from disabled
-  (`StrictHostKeyChecking=no`) to trust-on-first-use (`accept-new`) with a
-  persisted known-hosts file, protecting against MITM on later connections
-- Persistent P2P token lookup now uses constant-time comparison
-
 ### Fixed
 - Android 12+ light mode no longer renders a near-black background: removed
   the broken `values-v31` dynamic-color theme that hardcoded
@@ -38,6 +29,19 @@ All notable changes to RootADB Pro will be documented in this file.
   platform cannot render dark nav-bar icons, keeping buttons visible on light
   content
 - Orange accent uses a dark on-primary color for WCAG-compliant contrast
+
+## [1.3.0] - 2026-07-15
+
+### Security
+- Warpgate SSH password is now stored in `EncryptedSharedPreferences`
+  (Android Keystore) instead of plaintext prefs; existing stored passwords
+  migrate automatically on first read
+- SSH host key verification for Warpgate tunnels changed from disabled
+  (`StrictHostKeyChecking=no`) to trust-on-first-use (`accept-new`) with a
+  persisted known-hosts file, protecting against MITM on later connections
+- Persistent P2P token lookup now uses constant-time comparison
+
+### Fixed
 - Legacy (v1.0) trusted-device records no longer deserialize with a null
   device ID (Gson bypasses Kotlin null-safety); records are now routed by
   JSON shape and old entries parse correctly instead of crashing on access
