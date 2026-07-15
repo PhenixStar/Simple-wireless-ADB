@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import com.phenix.wirelessadb.util.NotificationHider
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.phenix.wirelessadb.model.ConnectionMode
@@ -149,6 +150,10 @@ class AdbService : Service() {
     val tailscaleIp = TailscaleHelper.getTailscaleIp()
     startForeground(NOTIFICATION_ID, createNotification(ip, port, tailscaleIp, relayEnabled))
 
+    // adbd was just (re)started, so the debugging notification is back;
+    // re-apply hiding if the user enabled it.
+    serviceScope.launch { NotificationHider.reapplyIfEnabled(this@AdbService) }
+
     if (relayEnabled) {
       startRelayServer(port)
     }
@@ -212,6 +217,8 @@ class AdbService : Service() {
             currentPort = newStatus.port
             updateNotification()
           }
+          // adbd was just restarted; re-apply notification hiding if enabled.
+          NotificationHider.reapplyIfEnabled(this@AdbService)
         } else {
           Log.e(TAG, "Failed to re-enable ADB: ${result.exceptionOrNull()?.message}")
         }
