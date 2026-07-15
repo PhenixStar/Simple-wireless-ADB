@@ -2,7 +2,7 @@
 
 All notable changes to RootADB Pro will be documented in this file.
 
-## [Unreleased]
+## [1.4.0] - 2026-07-15
 
 ### Changed
 - Target and compile SDK raised from 34 to 35 (Android 15); Android 15's
