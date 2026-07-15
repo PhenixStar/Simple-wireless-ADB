@@ -53,8 +53,14 @@ object AdbManager {
     if (!validatePort(port)) {
       return@withContext Result.failure(IllegalArgumentException("Port must be $MIN_PORT-$MAX_PORT"))
     }
+    // Only set the ephemeral service prop for the active port. Do NOT set the
+    // persistent prop: persist.adb.tcp.port survives reboots and app uninstall,
+    // permanently forcing adbd into TCP mode and disabling USB adb (the device
+    // gets wedged on the chosen port). Reboot persistence is instead handled at
+    // the app layer by BootReceiver, and we pin persist to -1 so a reboot always
+    // restores normal USB adb.
     val result = runRootCommand(
-      "setprop persist.adb.tcp.port $port",
+      "setprop persist.adb.tcp.port -1",
       "setprop service.adb.tcp.port $port",
       "stop adbd",
       "start adbd"
