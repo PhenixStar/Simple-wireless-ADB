@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Accent Color Presets (v1.2.0) -->
+  <!-- Accent tonal palettes (light mode). Dark variants in values-night/colors_accents.xml. -->
 
   <!-- Blue -->
   <color name="accent_blue_primary">#1976D2</color>
   <color name="accent_blue_variant">#1565C0</color>
+  <color name="accent_blue_on_primary">#FFFFFF</color>
+  <color name="accent_blue_container">#D5E3FF</color>
+  <color name="accent_blue_on_container">#001B3D</color>
 
   <!-- Teal (Default) -->
   <color name="accent_teal_primary">#00897B</color>
   <color name="accent_teal_variant">#00796B</color>
+  <color name="accent_teal_on_primary">#FFFFFF</color>
+  <color name="accent_teal_container">#9CF2E2</color>
+  <color name="accent_teal_on_container">#00201B</color>
 
   <!-- Purple -->
   <color name="accent_purple_primary">#7B1FA2</color>
   <color name="accent_purple_variant">#6A1B9A</color>
+  <color name="accent_purple_on_primary">#FFFFFF</color>
+  <color name="accent_purple_container">#F5D9FF</color>
+  <color name="accent_purple_on_container">#2D0050</color>
 
-  <!-- Orange -->
+  <!-- Orange (vivid primary keeps brand hue; dark on-color preserves contrast) -->
   <color name="accent_orange_primary">#F57C00</color>
   <color name="accent_orange_variant">#EF6C00</color>
+  <color name="accent_orange_on_primary">#331200</color>
+  <color name="accent_orange_container">#FFDCC2</color>
+  <color name="accent_orange_on_container">#2E1500</color>
 
   <!-- Pink -->
   <color name="accent_pink_primary">#D81B60</color>
   <color name="accent_pink_variant">#C2185B</color>
+  <color name="accent_pink_on_primary">#FFFFFF</color>
+  <color name="accent_pink_container">#FFD9E1</color>
+  <color name="accent_pink_on_container">#3F0018</color>
 
   <!-- Green -->
   <color name="accent_green_primary">#388E3C</color>
   <color name="accent_green_variant">#2E7D32</color>
+  <color name="accent_green_on_primary">#FFFFFF</color>
+  <color name="accent_green_container">#B6F2AF</color>
+  <color name="accent_green_on_container">#002204</color>
 
-  <!-- Common on-primary color for all accents -->
+  <!-- Common on-primary color for all accents (picker check icon) -->
   <color name="accent_on_primary">#FFFFFF</color>
 </resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Accent theme overlays, applied on top of Theme.WirelessADB at runtime
+       (ThemeManager.applyAccent). Colors are night-qualified, so one overlay
+       per accent covers both light and dark modes. -->
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Blue" parent="">
+    <item name="colorPrimary">@color/accent_blue_primary</item>
+    <item name="colorOnPrimary">@color/accent_blue_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_blue_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_blue_on_container</item>
+  </style>
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Teal" parent="">
+    <item name="colorPrimary">@color/accent_teal_primary</item>
+    <item name="colorOnPrimary">@color/accent_teal_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_teal_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_teal_on_container</item>
+  </style>
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Purple" parent="">
+    <item name="colorPrimary">@color/accent_purple_primary</item>
+    <item name="colorOnPrimary">@color/accent_purple_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_purple_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_purple_on_container</item>
+  </style>
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Orange" parent="">
+    <item name="colorPrimary">@color/accent_orange_primary</item>
+    <item name="colorOnPrimary">@color/accent_orange_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_orange_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_orange_on_container</item>
+  </style>
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Pink" parent="">
+    <item name="colorPrimary">@color/accent_pink_primary</item>
+    <item name="colorOnPrimary">@color/accent_pink_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_pink_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_pink_on_container</item>
+  </style>
+
+  <style name="ThemeOverlay.WirelessADB.Accent.Green" parent="">
+    <item name="colorPrimary">@color/accent_green_primary</item>
+    <item name="colorOnPrimary">@color/accent_green_on_primary</item>
+    <item name="colorPrimaryContainer">@color/accent_green_container</item>
+    <item name="colorOnPrimaryContainer">@color/accent_green_on_container</item>
+  </style>
+</resources>

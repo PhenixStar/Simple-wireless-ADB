@@ -1,8 +1,11 @@
 package com.phenix.wirelessadb.theme
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.color.DynamicColors
 import com.phenix.wirelessadb.PrefsManager
 
 /**
@@ -47,6 +50,29 @@ object ThemeManager {
   fun getThemeMode(context: Context): ThemeMode {
     return PrefsManager.getThemeMode(context)
   }
+
+  /**
+   * Apply the saved accent color to an Activity's theme.
+   * Call after super.onCreate() and before setContentView().
+   *
+   * DYNAMIC uses Material You wallpaper colors (Android 12+); other accents
+   * apply a static tonal overlay that works on every supported version.
+   */
+  fun applyAccent(activity: Activity) {
+    val accent = getAccentColor(activity)
+    if (accent == AccentColor.DYNAMIC && isDynamicColorAvailable()) {
+      DynamicColors.applyToActivityIfAvailable(activity)
+    } else {
+      val effective = if (accent == AccentColor.DYNAMIC) AccentColor.DEFAULT else accent
+      activity.theme.applyStyle(effective.themeOverlay, true)
+    }
+  }
+
+  /**
+   * Whether Material You dynamic color is available on this device.
+   */
+  fun isDynamicColorAvailable(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DynamicColors.isDynamicColorAvailable()
 
   /**
    * Get current accent color.

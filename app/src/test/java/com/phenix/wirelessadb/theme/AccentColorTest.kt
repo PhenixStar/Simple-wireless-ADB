@@ -36,13 +36,18 @@ class AccentColorTest {
   }
 
   @Test
+  fun `fromOrdinal returns DYNAMIC for ordinal 6`() {
+    assertEquals(AccentColor.DYNAMIC, AccentColor.fromOrdinal(6))
+  }
+
+  @Test
   fun `fromOrdinal returns DEFAULT for negative ordinal`() {
     assertEquals(AccentColor.DEFAULT, AccentColor.fromOrdinal(-1))
   }
 
   @Test
   fun `fromOrdinal returns DEFAULT for out of bounds ordinal`() {
-    assertEquals(AccentColor.DEFAULT, AccentColor.fromOrdinal(6))
+    assertEquals(AccentColor.DEFAULT, AccentColor.fromOrdinal(7))
     assertEquals(AccentColor.DEFAULT, AccentColor.fromOrdinal(100))
   }
 
@@ -59,12 +64,14 @@ class AccentColorTest {
     assertEquals(3, AccentColor.ORANGE.ordinal)
     assertEquals(4, AccentColor.PINK.ordinal)
     assertEquals(5, AccentColor.GREEN.ordinal)
+    // DYNAMIC must stay last: prefs persist the ordinal
+    assertEquals(6, AccentColor.DYNAMIC.ordinal)
   }
 
   @Test
-  fun `entries contains all 6 colors`() {
+  fun `entries contains all 7 accents`() {
     val entries = AccentColor.entries
-    assertEquals(6, entries.size)
+    assertEquals(7, entries.size)
   }
 
   @Test
@@ -83,6 +90,7 @@ class AccentColorTest {
     assertEquals("Orange", AccentColor.ORANGE.displayName)
     assertEquals("Pink", AccentColor.PINK.displayName)
     assertEquals("Green", AccentColor.GREEN.displayName)
+    assertEquals("Dynamic", AccentColor.DYNAMIC.displayName)
   }
 
   @Test

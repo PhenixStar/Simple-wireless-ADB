@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.phenix.wirelessadb.databinding.ActivityMainBinding
 import com.phenix.wirelessadb.theme.ThemeManager
 import com.phenix.wirelessadb.ui.MainPagerAdapter
 import com.phenix.wirelessadb.util.AccessibilityHelper
+import com.phenix.wirelessadb.util.applyTopSystemBarInsets
 import com.phenix.wirelessadb.util.isReducedMotionEnabled
 import com.phenix.wirelessadb.viewmodel.AdbViewModel
 
@@ -50,10 +52,25 @@ class MainActivity : AppCompatActivity() {
     ThemeManager.applyTheme(this)
 
     super.onCreate(savedInstanceState)
+
+    // Apply accent color overlay (or Material You dynamic color) before inflating views
+    ThemeManager.applyAccent(this)
+
     WindowCompat.setDecorFitsSystemWindows(window, false)
+
+    // API 26 can't render dark nav-bar icons (windowLightNavigationBar is API 27+),
+    // so a fully transparent nav bar would leave white buttons invisible on light
+    // content. Use a translucent scrim there instead.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+      @Suppress("DEPRECATION")
+      window.navigationBarColor = Color.argb(0x66, 0, 0, 0)
+    }
 
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    // Edge-to-edge: app bar absorbs the status bar / cutout insets
+    binding.appBarLayout.applyTopSystemBarInsets()
 
     setSupportActionBar(binding.toolbar)
 

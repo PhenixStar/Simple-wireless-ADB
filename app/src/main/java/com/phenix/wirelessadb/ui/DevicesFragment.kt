@@ -14,6 +14,7 @@ import com.phenix.wirelessadb.model.TrustedDevice
 import com.phenix.wirelessadb.relay.DeviceAuthManager
 import com.phenix.wirelessadb.util.AccessibilityHelper.announceForAccessibility
 import com.phenix.wirelessadb.viewmodel.AdbViewModel
+import com.phenix.wirelessadb.util.applyBottomSystemBarInsets
 
 /**
  * TAB 2: DEVICES (v1.3.0)
@@ -42,6 +43,8 @@ class DevicesFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    // Edge-to-edge: keep scrollable content clear of the gesture/navigation bar
+    view.applyBottomSystemBarInsets()
     authManager = DeviceAuthManager(requireContext())
     setupViews()
     observeViewModel()
